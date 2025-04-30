@@ -1,0 +1,34 @@
+<!-- /myproject/myapp/templates/myapp/subscription_list.html -->
+{% extends 'myapp/base.html' %}
+{% block title %}แพ็คเกจสมาชิก - FitGear{% endblock %}
+{% block content %}
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">แพ็คเกจสมาชิก</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {% for plan in subscription_plans %}
+            <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col">
+                <div class="border-b pb-4 mb-4">
+                    <h2 class="text-2xl font-bold text-center">{{ plan.name }}</h2>
+                    <p class="text-gray-600 text-center">{{ plan.get_duration_display }}</p>
+                </div>
+                
+                <div class="text-center mb-6">
+                    <span class="text-4xl font-bold text-blue-600">฿{{ plan.price }}</span>
+                    <span class="text-gray-600">/{{ plan.get_duration_display }}</span>
+                </div>
+                
+                <div class="flex-grow mb-6">
+                    <p class="text-gray-700">{{ plan.description }}</p>
+                </div>
+                
+                <a href="{% url 'subscription_detail' plan.id %}" class="mt-auto text-center bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition block">
+                    ดูรายละเอียด
+                </a>
+            </div>
+        {% empty %}
+            <div class="col-span-full text-center text-gray-500 py-10">
+                ไม่มีแพ็คเกจสมาชิกที่เปิดให้บริการในขณะนี้
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

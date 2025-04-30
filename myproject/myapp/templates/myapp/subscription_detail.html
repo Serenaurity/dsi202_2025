@@ -1,0 +1,31 @@
+<!-- /myproject/myapp/templates/myapp/subscription_detail.html -->
+{% extends 'myapp/base.html' %}
+{% block title %}{{ subscription_plan.name }} - FitGear{% endblock %}
+{% block content %}
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-2xl mx-auto">
+        <h1 class="text-3xl font-bold text-center mb-2">{{ subscription_plan.name }}</h1>
+        <p class="text-gray-600 text-center mb-6">{{ subscription_plan.get_duration_display }}</p>
+        
+        <div class="text-center mb-8">
+            <span class="text-5xl font-bold text-blue-600">฿{{ subscription_plan.price }}</span>
+            <span class="text-gray-600">/{{ subscription_plan.get_duration_display }}</span>
+        </div>
+        
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold mb-4">รายละเอียด</h2>
+            <p class="text-gray-700">{{ subscription_plan.description }}</p>
+        </div>
+        
+        <div class="flex justify-center">
+            <a href="{% url 'subscribe' subscription_plan.id %}" class="bg-blue-600 text-white py-3 px-8 rounded-lg hover:bg-blue-700 transition">
+                สมัครสมาชิก
+            </a>
+        </div>
+    </div>
+    
+    <div class="mt-6 text-center">
+        <a href="{% url 'subscription_list' %}" class="text-blue-600 hover:underline">
+            &larr; กลับไปยังรายการแพ็คเกจ
+        </a>
+    </div>
+{% endblock %}
