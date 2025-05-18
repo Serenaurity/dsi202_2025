@@ -1,23 +1,45 @@
 <!-- /myproject/myapp/templates/myapp/login.html -->
 {% extends 'myapp/base.html' %}
+{% load socialaccount %}
 {% block title %}เข้าสู่ระบบ - CareME{% endblock %}
 {% block content %}
-    <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
-        <h1 class="text-2xl font-bold text-center mb-6">เข้าสู่ระบบ</h1>
+    <div class="form-container max-w-md mx-auto pt-20">
+        <h1 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-gray-100">เข้าสู่ระบบ</h1>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="mb-4 p-4 rounded-lg {% if message.tags == 'success' %}bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100{% elif message.tags == 'error' %}bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100{% elif message.tags == 'warning' %}bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100{% else %}bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100{% endif %}">
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% if next %}
+            {% if user.is_authenticated %}
+                <div class="mb-4 p-4 rounded-lg bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100">
+                    <p>คุณไม่มีสิทธิ์เข้าถึงหน้านี้ กรุณาเข้าสู่ระบบด้วยบัญชีที่มีสิทธิ์เข้าถึง</p>
+                </div>
+            {% else %}
+                <div class="mb-4 p-4 rounded-lg bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100">
+                    <p>กรุณาเข้าสู่ระบบเพื่อดูหน้านี้</p>
+                </div>
+            {% endif %}
+        {% endif %}
         
         <form method="post" class="space-y-4">
             {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}" />
             
             <div>
-                <label for="id_username" class="block text-sm font-medium text-gray-700">ชื่อผู้ใช้</label>
+                <label for="id_username" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ชื่อผู้ใช้</label>
                 <input type="text" name="username" id="id_username" required 
-                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
             </div>
             
             <div>
-                <label for="id_password" class="block text-sm font-medium text-gray-700">รหัสผ่าน</label>
+                <label for="id_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">รหัสผ่าน</label>
                 <input type="password" name="password" id="id_password" required 
-                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
             </div>
             
             {% if form.errors %}
@@ -27,15 +49,43 @@
             {% endif %}
             
             <div>
-                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-mint hover:bg-teal focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mint">
                     เข้าสู่ระบบ
                 </button>
             </div>
         </form>
         
+        <!-- เพิ่มส่วนล็อกอินด้วย Google -->
+        <div class="mt-6">
+            <div class="relative">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                        หรือเข้าสู่ระบบด้วย
+                    </span>
+                </div>
+            </div>
+            
+            <div class="mt-6">
+                <a href="{% provider_login_url 'google' %}" class="w-full flex justify-center items-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                    <svg class="h-5 w-5 mr-2" viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+                        <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">
+                            <path fill="#4285F4" d="M -3.264 51.509 C -3.264 50.719 -3.334 49.969 -3.454 49.239 L -14.754 49.239 L -14.754 53.749 L -8.284 53.749 C -8.574 55.229 -9.424 56.479 -10.684 57.329 L -10.684 60.329 L -6.824 60.329 C -4.564 58.239 -3.264 55.159 -3.264 51.509 Z"/>
+                            <path fill="#34A853" d="M -14.754 63.239 C -11.514 63.239 -8.804 62.159 -6.824 60.329 L -10.684 57.329 C -11.764 58.049 -13.134 58.489 -14.754 58.489 C -17.884 58.489 -20.534 56.379 -21.484 53.529 L -25.464 53.529 L -25.464 56.619 C -23.494 60.539 -19.444 63.239 -14.754 63.239 Z"/>
+                            <path fill="#FBBC05" d="M -21.484 53.529 C -21.734 52.809 -21.864 52.039 -21.864 51.239 C -21.864 50.439 -21.724 49.669 -21.484 48.949 L -21.484 45.859 L -25.464 45.859 C -26.284 47.479 -26.754 49.299 -26.754 51.239 C -26.754 53.179 -26.284 54.999 -25.464 56.619 L -21.484 53.529 Z"/>
+                            <path fill="#EA4335" d="M -14.754 43.989 C -12.984 43.989 -11.404 44.599 -10.154 45.789 L -6.734 42.369 C -8.804 40.429 -11.514 39.239 -14.754 39.239 C -19.444 39.239 -23.494 41.939 -25.464 45.859 L -21.484 48.949 C -20.534 46.099 -17.884 43.989 -14.754 43.989 Z"/>
+                        </g>
+                    </svg>
+                    เข้าสู่ระบบด้วย Google
+                </a>
+            </div>
+        </div>
+        
         <div class="mt-6 text-center">
-            <p class="text-sm text-gray-600">
-                ยังไม่มีบัญชี? <a href="{% url 'register' %}" class="text-blue-600 hover:underline">สมัครสมาชิก</a>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+                ยังไม่มีบัญชี? <a href="{% url 'register' %}" class="text-mint hover:text-teal hover:underline">สมัครสมาชิก</a>
             </p>
         </div>
     </div>

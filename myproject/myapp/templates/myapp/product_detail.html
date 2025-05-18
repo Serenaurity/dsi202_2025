@@ -2,47 +2,266 @@
 {% extends 'myapp/base.html' %}
 {% block title %}{{ product.name }} - CareME{% endblock %}
 {% block content %}
-    <div class="bg-white p-6 rounded-lg shadow mb-6">
-        <div class="flex flex-wrap md:flex-nowrap gap-8">
-            <!-- Product Image -->
-            <div class="w-full md:w-1/2">
-                {% if product.image %}
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-auto object-cover rounded-lg">
-                {% else %}
-                    <div class="bg-gray-200 w-full h-64 flex items-center justify-center rounded-lg">
-                        <span class="text-gray-500">ไม่มีรูปภาพ</span>
+    <div class="container mx-auto py-8 pt-20 px-4">
+        <!-- Breadcrumbs -->
+        <nav class="flex mb-8 text-gray-600 dark:text-gray-400">
+            <a href="{% url 'home' %}" class="hover:text-mint transition-colors">หน้าแรก</a>
+            <span class="mx-2">/</span>
+            <a href="{% url 'product_list' %}" class="hover:text-mint transition-colors">อุปกรณ์</a>
+            <span class="mx-2">/</span>
+            <span class="text-gray-900 dark:text-white">{{ product.name }}</span>
+        </nav>
+        
+        <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden animate-on-scroll">
+            <div class="flex flex-col md:flex-row">
+                <!-- Product Image Gallery -->
+                <div class="w-full md:w-1/2 p-6">
+                    <div class="aspect-w-1 aspect-h-1 bg-gray-100 dark:bg-gray-700 rounded-3xl overflow-hidden mb-4">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover" id="mainImage">
+                        {% else %}
+                            <div class="w-full h-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                        {% endif %}
                     </div>
-                {% endif %}
-            </div>
-            
-            <!-- Product Info -->
-            <div class="w-full md:w-1/2">
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ product.name }}</h1>
-                <p class="text-2xl font-bold text-blue-600 mb-4">฿{{ product.price }}</p>
-                
-                <div class="mb-6">
-                    <h2 class="text-xl font-semibold mb-2">รายละเอียดสินค้า</h2>
-                    <p class="text-gray-700">{{ product.description }}</p>
+                    
+                    <!-- Thumbnails (placeholder) -->
+                    <div class="grid grid-cols-4 gap-4">
+                        {% if product.image %}
+                            <button class="bg-gray-100 dark:bg-gray-700 rounded-xl overflow-hidden border-2 border-mint">
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+                            </button>
+                            <!-- Placeholder thumbnails for demonstration -->
+                            {% for i in '234'|make_list %}
+                                <button class="bg-gray-100 dark:bg-gray-700 rounded-xl overflow-hidden hover:border-2 hover:border-mint transition-all">
+                                    <div class="aspect-w-1 aspect-h-1 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                </button>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
                 </div>
                 
-                <div class="mb-4">
-                    <span class="inline-block bg-{% if product.stock > 0 %}green{% else %}red{% endif %}-100 text-{% if product.stock > 0 %}green{% else %}red{% endif %}-800 px-3 py-1 rounded-full text-sm font-semibold">
-                        {% if product.stock > 0 %}มีสินค้า{% else %}สินค้าหมด{% endif %}
+                <!-- Product Information -->
+                <div class="w-full md:w-1/2 p-6">
+                    <span class="inline-block bg-mint bg-opacity-20 text-mint px-3 py-1 rounded-full text-sm font-medium mb-4">
+                        {{ product.is_active|yesno:"มีสินค้า,สินค้าหมด" }}
                     </span>
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">{{ product.name }}</h1>
+                    <div class="flex items-baseline mb-6">
+                        <span class="text-3xl font-bold text-mint">฿{{ product.price|floatformat:2 }}</span>
+                        {% if product.discount_price %}
+                            <span class="ml-2 text-lg text-gray-500 dark:text-gray-400 line-through">฿{{ product.discount_price|floatformat:2 }}</span>
+                            <span class="ml-2 bg-peach text-white px-2 py-1 rounded-full text-xs font-medium">-{{ product.discount_percentage }}%</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="prose prose-lg dark:prose-invert text-gray-700 dark:text-gray-300 mb-8">
+                        <p>{{ product.description }}</p>
+                    </div>
+                    
+                    <!-- Quantity Selector -->
+                    <div class="mb-8">
+                        <label for="quantity" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">จำนวน</label>
+                        <div class="flex">
+                            <button class="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-2 rounded-l-lg">-</button>
+                            <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ product.stock }}" class="w-16 text-center border-none focus:ring-0 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white">
+                            <button class="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 px-4 py-2 rounded-r-lg">+</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Add to Cart Button -->
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        {% if product.stock > 0 %}
+                            <a href="{% url 'add_to_cart' product.id %}" class="flex-grow text-center py-4 bg-gradient-to-r from-mint to-teal text-rich-black font-bold rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300">
+                                เพิ่มลงตะกร้า
+                            </a>
+                        {% else %}
+                            <button disabled class="flex-grow text-center py-4 bg-gray-300 dark:bg-gray-700 text-gray-600 dark:text-gray-400 font-bold rounded-xl cursor-not-allowed">
+                                สินค้าหมด
+                            </button>
+                        {% endif %}
+                        <button class="flex items-center justify-center p-4 border-2 border-mint text-mint rounded-xl hover:bg-mint hover:bg-opacity-10 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <!-- Product Additional Info -->
+                    <div class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-6">
+                        <div class="flex items-center mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-mint mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span class="text-gray-700 dark:text-gray-300">รับประกันคุณภาพ 1 ปี</span>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-mint mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span class="text-gray-700 dark:text-gray-300">จัดส่งฟรีเมื่อซื้อครบ 2,000 บาท</span>
+                        </div>
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-mint mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span class="text-gray-700 dark:text-gray-300">บริการหลังการขายทั่วประเทศ</span>
+                        </div>
+                    </div>
                 </div>
-                
-                {% if product.stock > 0 %}
-                <a href="{% url 'add_to_cart' product.id %}" class="inline-block bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition w-full text-center">
-                    เพิ่มลงตะกร้า
-                </a>
-                {% endif %}
             </div>
         </div>
+        
+        <!-- Product Details Tabs -->
+        <div class="mt-12" x-data="{ activeTab: 'description' }">
+            <!-- Tabs -->
+            <div class="flex border-b border-gray-200 dark:border-gray-700 mb-6">
+                <button 
+                    @click="activeTab = 'description'" 
+                    :class="{ 'border-mint text-mint': activeTab === 'description', 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300': activeTab !== 'description' }"
+                    class="py-4 px-6 border-b-2 font-medium text-sm focus:outline-none">
+                    รายละเอียด
+                </button>
+                <button 
+                    @click="activeTab = 'specifications'" 
+                    :class="{ 'border-mint text-mint': activeTab === 'specifications', 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300': activeTab !== 'specifications' }"
+                    class="py-4 px-6 border-b-2 font-medium text-sm focus:outline-none">
+                    สเปค
+                </button>
+                <button 
+                    @click="activeTab = 'reviews'" 
+                    :class="{ 'border-mint text-mint': activeTab === 'reviews', 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300': activeTab !== 'reviews' }"
+                    class="py-4 px-6 border-b-2 font-medium text-sm focus:outline-none">
+                    รีวิว
+                </button>
+            </div>
+            
+            <!-- Tab Content -->
+            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-6 animate-on-scroll">
+                <!-- Description Tab -->
+                <div x-show="activeTab === 'description'" class="prose prose-lg max-w-none dark:prose-invert">
+                    <p>{{ product.description }}</p>
+                    <!-- ข้อมูลเพิ่มเติมจะแสดงที่นี่ -->
+                </div>
+                
+                <!-- Specifications Tab -->
+                <div x-show="activeTab === 'specifications'" class="prose prose-lg max-w-none dark:prose-invert">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">รหัสสินค้า</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ product.id }}</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">น้ำหนัก</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">ตัวอย่าง: 5 กิโลกรัม</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">ขนาด</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">ตัวอย่าง: 120 x 60 x 150 ซม.</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">วัสดุ</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">ตัวอย่าง: เหล็กเคลือบ, ยาง, พลาสติก ABS</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">รองรับน้ำหนักสูงสุด</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">ตัวอย่าง: 150 กิโลกรัม</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Reviews Tab -->
+                <div x-show="activeTab === 'reviews'" class="prose prose-lg max-w-none dark:prose-invert">
+                    <div class="flex items-center mb-6">
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300 dark:text-gray-600" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                        </div>
+                        <span class="ml-2 text-gray-900 dark:text-white">4.0 จาก 5</span>
+                    </div>
+                    
+                    <p class="text-gray-500 dark:text-gray-400">ยังไม่มีรีวิวสำหรับสินค้านี้</p>
+                    
+                    <button class="mt-4 inline-block bg-mint text-rich-black py-2 px-4 rounded-lg hover:bg-opacity-90 transition">
+                        เขียนรีวิว
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Related Products -->
+        <section class="mt-16">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-8">สินค้าแนะนำ</h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Placeholder for related products -->
+                {% for i in '1234'|make_list %}
+                    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-on-scroll">
+                        <div class="aspect-w-1 aspect-h-1 bg-gray-200 dark:bg-gray-700">
+                            <div class="w-full h-full flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-gray-900 dark:text-white font-medium">สินค้าแนะนำ {{ i }}</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">รายละเอียดสินค้า...</p>
+                            <div class="mt-2 flex justify-between items-center">
+                                <span class="text-mint font-bold">฿X,XXX</span>
+                                <a href="#" class="text-sm text-mint hover:underline">ดูรายละเอียด</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
     </div>
     
-    <div class="mt-6">
-        <a href="{% url 'product_list' %}" class="text-blue-600 hover:underline">
-            &larr; กลับไปยังรายการสินค้า
-        </a>
-    </div>
+    <!-- Script for image gallery -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const thumbnails = document.querySelectorAll('.product-thumbnail');
+            const mainImage = document.getElementById('mainImage');
+            
+            if (thumbnails.length > 0 && mainImage) {
+                thumbnails.forEach(thumbnail => {
+                    thumbnail.addEventListener('click', function() {
+                        // Remove border from all thumbnails
+                        thumbnails.forEach(thumb => {
+                            thumb.classList.remove('border-2', 'border-mint');
+                        });
+                        
+                        // Add border to selected thumbnail
+                        this.classList.add('border-2', 'border-mint');
+                        
+                        // Update main image
+                        mainImage.src = this.querySelector('img').src;
+                    });
+                });
+            }
+        });
+    </script>
 {% endblock %}

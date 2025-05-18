@@ -1,0 +1,99 @@
+<!-- templates/myapp/view_exercise_plan.html -->
+{% extends 'myapp/base.html' %}
+{% block title %}แผนออกกำลังกายของฉัน - CareME{% endblock %}
+{% block content %}
+<div class="container mx-auto py-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">แผนออกกำลังกายของฉัน</h1>
+        <a href="{% url 'exercise_plan' %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            แก้ไขแผน
+        </a>
+    </div>
+    
+    <!-- ข้อมูลแผน -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <h3 class="text-sm font-medium text-gray-500">เป้าหมาย</h3>
+                <p class="mt-1">{{ exercise_plan.get_goal_display }}</p>
+            </div>
+            <div>
+                <h3 class="text-sm font-medium text-gray-500">ระดับความสามารถ</h3>
+                <p class="mt-1">{{ exercise_plan.get_level_display }}</p>
+            </div>
+            <div>
+                <h3 class="text-sm font-medium text-gray-500">จำนวนวันต่อสัปดาห์</h3>
+                <p class="mt-1">{{ exercise_plan.days_per_week }} วัน</p>
+            </div>
+            <div>
+                <h3 class="text-sm font-medium text-gray-500">เวลาที่เหมาะสม</h3>
+                <p class="mt-1">{{ exercise_plan.get_preferred_time_display }}</p>
+            </div>
+            <div>
+                <h3 class="text-sm font-medium text-gray-500">รูปแบบการฝึก</h3>
+                <p class="mt-1">{{ exercise_plan.get_training_focus_display }}</p>
+            </div>
+            <div>
+                <h3 class="text-sm font-medium text-gray-500">อุปกรณ์ที่บ้าน</h3>
+                <p class="mt-1">{{ exercise_plan.available_equipment|yesno:"มี,ไม่มี" }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ปฏิทินแผนออกกำลังกาย -->
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
+        <div class="bg-blue-600 text-white p-4">
+            <h2 class="text-xl font-semibold">ปฏิทินออกกำลังกาย</h2>
+            <p class="text-sm text-blue-100">เริ่มวันที่ {{ exercise_plan.start_date|date:"d/m/Y" }}</p>
+        </div>
+        
+        <div class="p-4">
+            {% for week in calendar_days|slice:":28"|groupby:"week_number" %}
+                <h3 class="font-medium text-lg mt-4 mb-2">สัปดาห์ที่ {{ week.grouper }}</h3>
+                <div class="grid grid-cols-7 gap-2">
+                    {% for day in week.list %}
+                        <div class="border rounded-lg overflow-hidden {% if day.is_today %}ring-2 ring-blue-500{% endif %}">
+                            <div class="bg-gray-100 p-2 text-center border-b">
+                                <span class="text-sm font-medium">{{ day.date|date:"D" }}</span>
+                                <p class="text-xs">{{ day.date|date:"d/m" }}</p>
+                            </div>
+                            <div class="p-2 text-center min-h-24 flex flex-col items-center justify-center">
+                                {% if day.workout_day.focus == 'rest' %}
+                                    <span class="text-green-600 font-medium">พักผ่อน</span>
+                                {% else %}
+                                    <span class="font-medium">{{ day.workout_day.get_focus_display }}</span>
+                                    <a href="{% url 'view_workout_day' day.workout_day.id %}" class="text-xs text-blue-600 hover:underline mt-1 block">
+                                        ดูรายละเอียด
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- คำแนะนำเพิ่มเติม -->
+   <div class="bg-white rounded-lg shadow-lg p-6">
+    <h2 class="text-xl font-semibold mb-4">คำแนะนำเพิ่มเติม</h2>
+    
+    <div class="space-y-4">
+        <div>
+            <h3 class="font-medium">การวอร์มอัพ</h3>
+            <p class="text-sm text-gray-600">ก่อนออกกำลังกายทุกครั้ง วอร์มอัพร่างกายประมาณ 5-10 นาที ด้วยการเดินเร็ว กระโดดเชือก หรือยืดเหยียดกล้ามเนื้ออย่างง่าย เพื่อให้ร่างกายพร้อมสำหรับการออกกำลังกาย</p>
+        </div>
+        
+        <div>
+            <h3 class="font-medium">การคูลดาวน์</h3>
+            <p class="text-sm text-gray-600">หลังออกกำลังกาย ควรคูลดาวน์ประมาณ 5-10 นาที ด้วยการเดินช้าๆ และยืดเหยียดกล้ามเนื้อ เพื่อลดอาการปวดกล้ามเนื้อและช่วยให้ร่างกายฟื้นตัวได้เร็วขึ้น</p>
+        </div>
+        
+        <div>
+            <h3 class="font-medium">การปรับระดับความหนัก</h3>
+            <p class="text-sm text-gray-600">หากรู้สึกว่าการออกกำลังกายง่ายเกินไป ให้เพิ่มน้ำหนัก หรือเพิ่มจำนวนเซ็ต/ครั้ง หากยากเกินไป ให้ลดน้ำหนักหรือจำนวนเซ็ต/ครั้ง เพื่อให้ท่าออกกำลังกายมีความท้าทายแต่ไม่หนักเกินไป</p>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

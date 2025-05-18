@@ -1,0 +1,199 @@
+<!-- /myproject/myapp/templates/myapp/profile_setup.html -->
+{% extends 'myapp/base.html' %}
+{% block title %}ตั้งค่าโปรไฟล์ - CareME{% endblock %}
+{% block content %}
+<div class="container mx-auto py-6 px-4">
+    <h1 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">ข้อมูลส่วนตัวสำหรับแผนสุขภาพ</h1>
+    
+    <!-- แสดง Messages (ถ้ามี) -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="mb-4 p-4 {% if message.tags == 'success' %}bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100{% elif message.tags == 'error' %}bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100{% else %}bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100{% endif %} rounded-lg">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+        <div class="bg-blue-600 text-white p-4">
+            <h2 class="text-xl font-semibold">ข้อมูลส่วนบุคคล</h2>
+            <p class="text-sm mt-1 text-blue-100">ข้อมูลนี้จะช่วยให้เราสร้างแผนสุขภาพที่เหมาะสมกับคุณ</p>
+        </div>
+        
+        <div class="p-6">
+            <form method="post" id="profile-form" novalidate>
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next }}">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="{{ form.birth_date.id_for_label }}">{{ form.birth_date.label }} <span class="text-red-500">*</span></label>
+                        {{ form.birth_date }}
+                        {% if form.birth_date.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.birth_date.errors.0 }}</p>
+                        {% endif %}
+                        {% if form.birth_date.help_text %}
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ form.birth_date.help_text }}</p>
+                        {% endif %}
+                        <div class="text-red-500 text-xs mt-1 error-message" id="birth_date-error" style="display: none;"></div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="{{ form.gender.id_for_label }}">{{ form.gender.label }} <span class="text-red-500">*</span></label>
+                        {{ form.gender }}
+                        {% if form.gender.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.gender.errors.0 }}</p>
+                        {% endif %}
+                        <div class="text-red-500 text-xs mt-1 error-message" id="gender-error" style="display: none;"></div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="{{ form.height.id_for_label }}">{{ form.height.label }} <span class="text-red-500">*</span></label>
+                        {{ form.height }}
+                        {% if form.height.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.height.errors.0 }}</p>
+                        {% endif %}
+                        <div class="text-red-500 text-xs mt-1 error-message" id="height-error" style="display: none;"></div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="{{ form.weight.id_for_label }}">{{ form.weight.label }} <span class="text-red-500">*</span></label>
+                        {{ form.weight }}
+                        {% if form.weight.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.weight.errors.0 }}</p>
+                        {% endif %}
+                        <div class="text-red-500 text-xs mt-1 error-message" id="weight-error" style="display: none;"></div>
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="{{ form.activity_level.id_for_label }}">{{ form.activity_level.label }} <span class="text-red-500">*</span></label>
+                        {{ form.activity_level }}
+                        {% if form.activity_level.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.activity_level.errors.0 }}</p>
+                        {% endif %}
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">ระดับกิจกรรมที่คุณทำเป็นประจำ</p>
+                        <div class="text-red-500 text-xs mt-1 error-message" id="activity_level-error" style="display: none;"></div>
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="{{ form.medical_conditions.id_for_label }}">{{ form.medical_conditions.label }}</label>
+                        {{ form.medical_conditions }}
+                        {% if form.medical_conditions.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.medical_conditions.errors.0 }}</p>
+                        {% endif %}
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">ข้อมูลนี้จะช่วยให้เราสร้างแผนที่ปลอดภัยสำหรับคุณ</p>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                        บันทึกข้อมูล
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('profile-form');
+        
+        form.addEventListener('submit', function(event) {
+            // Reset error messages
+            const errorMessages = document.querySelectorAll('.error-message');
+            errorMessages.forEach(element => {
+                element.style.display = 'none';
+                element.textContent = '';
+            });
+            
+            let isValid = true;
+            
+            // Validate birth date
+            const birthDateInput = document.getElementById('{{ form.birth_date.id_for_label }}');
+            if (!birthDateInput.value) {
+                document.getElementById('birth_date-error').textContent = 'กรุณาระบุวันเกิด';
+                document.getElementById('birth_date-error').style.display = 'block';
+                isValid = false;
+            } else {
+                const today = new Date();
+                const birthDate = new Date(birthDateInput.value);
+                const age = today.getFullYear() - birthDate.getFullYear();
+                
+                if (birthDate > today) {
+                    document.getElementById('birth_date-error').textContent = 'วันเกิดไม่สามารถเป็นวันในอนาคต';
+                    document.getElementById('birth_date-error').style.display = 'block';
+                    isValid = false;
+                } else if (age > 120) {
+                    document.getElementById('birth_date-error').textContent = 'อายุไม่สามารถมากกว่า 120 ปี';
+                    document.getElementById('birth_date-error').style.display = 'block';
+                    isValid = false;
+                }
+            }
+            
+            // Validate gender
+            const genderInput = document.getElementById('{{ form.gender.id_for_label }}');
+            if (!genderInput.value) {
+                document.getElementById('gender-error').textContent = 'กรุณาเลือกเพศ';
+                document.getElementById('gender-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate height
+            const heightInput = document.getElementById('{{ form.height.id_for_label }}');
+            if (!heightInput.value) {
+                document.getElementById('height-error').textContent = 'กรุณาระบุความสูง';
+                document.getElementById('height-error').style.display = 'block';
+                isValid = false;
+            } else if (isNaN(heightInput.value) || heightInput.value <= 0) {
+                document.getElementById('height-error').textContent = 'ความสูงต้องเป็นตัวเลขที่มากกว่า 0';
+                document.getElementById('height-error').style.display = 'block';
+                isValid = false;
+            } else if (heightInput.value < 50 || heightInput.value > 250) {
+                document.getElementById('height-error').textContent = 'ความสูงต้องอยู่ระหว่าง 50-250 ซม.';
+                document.getElementById('height-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate weight
+            const weightInput = document.getElementById('{{ form.weight.id_for_label }}');
+            if (!weightInput.value) {
+                document.getElementById('weight-error').textContent = 'กรุณาระบุน้ำหนัก';
+                document.getElementById('weight-error').style.display = 'block';
+                isValid = false;
+            } else if (isNaN(weightInput.value) || weightInput.value <= 0) {
+                document.getElementById('weight-error').textContent = 'น้ำหนักต้องเป็นตัวเลขที่มากกว่า 0';
+                document.getElementById('weight-error').style.display = 'block';
+                isValid = false;
+            } else if (weightInput.value < 20 || weightInput.value > 300) {
+                document.getElementById('weight-error').textContent = 'น้ำหนักต้องอยู่ระหว่าง 20-300 กก.';
+                document.getElementById('weight-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate activity level
+            const activityLevelInput = document.getElementById('{{ form.activity_level.id_for_label }}');
+            if (!activityLevelInput.value) {
+                document.getElementById('activity_level-error').textContent = 'กรุณาเลือกระดับการออกกำลังกาย';
+                document.getElementById('activity_level-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+        
+        // Add input styling on error
+        const inputs = form.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                const errorElement = document.getElementById(`${this.id.replace('id_', '')}-error`);
+                if (errorElement) {
+                    errorElement.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

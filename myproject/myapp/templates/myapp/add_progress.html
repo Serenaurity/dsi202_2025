@@ -1,0 +1,91 @@
+<!-- /myproject/myapp/templates/myapp/add_progress.html -->
+{% extends 'myapp/base.html' %}
+{% block title %}เพิ่มความก้าวหน้า - CareME{% endblock %}
+{% block content %}
+<div class="container mx-auto py-6 px-4">
+    <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-6">บันทึกความก้าวหน้า</h1>
+    
+    <!-- แสดง Messages (ถ้ามี) -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="mb-4 p-4 {% if message.tags == 'success' %}bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100{% elif message.tags == 'error' %}bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100{% else %}bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100{% endif %} rounded-lg">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+        <div class="bg-gradient-to-r from-mint to-teal p-4">
+            <h2 class="text-xl font-semibold text-rich-black">บันทึกความก้าวหน้าประจำวัน</h2>
+            <p class="text-sm mt-1 text-rich-black text-opacity-80">ติดตามการเปลี่ยนแปลงของร่างกายและความก้าวหน้าในการออกกำลังกาย</p>
+        </div>
+        
+        <div class="p-6">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="weight">น้ำหนัก (กก.)</label>
+                        <input type="number" name="weight" id="weight" step="0.1" min="20" max="300" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">บันทึกน้ำหนักปัจจุบันของคุณ</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="exercise_minutes">เวลาออกกำลังกาย (นาที)</label>
+                        <input type="number" name="exercise_minutes" id="exercise_minutes" min="0" max="1440" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">จำนวนนาทีที่คุณออกกำลังกายวันนี้</p>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="notes">บันทึกเพิ่มเติม</label>
+                    <textarea name="notes" id="notes" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">บันทึกความรู้สึก ความก้าวหน้า หรือสิ่งที่คุณต้องการปรับปรุง</p>
+                </div>
+                
+                <div class="flex items-center justify-between mt-6">
+                    <a href="{% url 'track_progress' %}" class="text-mint hover:underline">
+                        &larr; กลับไปยังหน้าติดตามความก้าวหน้า
+                    </a>
+                    <button type="submit" class="bg-gradient-to-r from-mint to-teal text-rich-black py-2 px-6 rounded-lg hover:shadow-md transition transform hover:-translate-y-0.5">
+                        บันทึกความก้าวหน้า
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- คำแนะนำ -->
+    <div class="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">เคล็ดลับการติดตามความก้าวหน้า</h3>
+        
+        <ul class="space-y-3 text-gray-700 dark:text-gray-300">
+            <li class="flex">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-mint mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>ชั่งน้ำหนักในเวลาเดียวกันทุกวัน โดยเฉพาะตอนเช้าหลังตื่นนอนและเข้าห้องน้ำ</span>
+            </li>
+            <li class="flex">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-mint mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>บันทึกเป็นประจำทุกวันหรืออย่างน้อยสัปดาห์ละ 2-3 ครั้ง เพื่อเห็นแนวโน้มการเปลี่ยนแปลง</span>
+            </li>
+            <li class="flex">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-mint mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>อย่าให้ความสำคัญกับตัวเลขบนเครื่องชั่งมากเกินไป สังเกตการเปลี่ยนแปลงของร่างกายด้วย</span>
+            </li>
+            <li class="flex">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-mint mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>น้ำหนักอาจมีการเปลี่ยนแปลงตามปริมาณน้ำในร่างกาย อาหาร และปัจจัยอื่นๆ</span>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

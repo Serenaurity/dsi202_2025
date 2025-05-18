@@ -2,33 +2,269 @@
 {% extends 'myapp/base.html' %}
 {% block title %}แพ็คเกจสมาชิก - CareME{% endblock %}
 {% block content %}
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">แพ็คเกจสมาชิก</h1>
-    
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {% for plan in subscription_plans %}
-            <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col">
-                <div class="border-b pb-4 mb-4">
-                    <h2 class="text-2xl font-bold text-center">{{ plan.name }}</h2>
-                    <p class="text-gray-600 text-center">{{ plan.get_duration_display }}</p>
+    <div class="container mx-auto py-8 pt-20 px-4">
+        <!-- Hero Section -->
+        <div class="text-center max-w-3xl mx-auto mb-16 animate-on-scroll">
+            <h1 class="text-4xl md:text-5xl font-display font-bold mb-4">
+                <span class="bg-gradient-to-r from-mint to-teal bg-clip-text text-transparent">
+                    ยกระดับประสบการณ์สุขภาพของคุณ
+                </span>
+            </h1>
+            <p class="text-xl text-gray-600 dark:text-gray-400">
+                เลือกแพ็คเกจที่เหมาะกับเป้าหมายและไลฟ์สไตล์ของคุณ เพื่อเริ่มการเดินทางสู่สุขภาพที่ดีกว่า
+            </p>
+        </div>
+        
+        <!-- Subscription Plans -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {% for plan in subscription_plans %}
+                <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl {% if forloop.counter == 2 %}scale-105{% endif %} animate-on-scroll delay-{{ forloop.counter0 }}">
+                    <div class="bg-gradient-to-r {% if forloop.counter == 1 %}from-mint to-teal{% elif forloop.counter == 2 %}from-peach to-secondary-dark{% else %}from-blue-400 to-purple-500{% endif %} py-8 px-6 text-center">
+                        <h3 class="text-2xl font-bold text-rich-black">{{ plan.name }}</h3>
+                        <p class="text-rich-black text-opacity-80">{{ plan.get_duration_display }}</p>
+                    </div>
+                    
+                    <div class="p-8">
+                        <div class="flex justify-center mb-8">
+                            <span class="text-5xl font-bold text-gray-900 dark:text-white">฿{{ plan.price }}</span>
+                            <span class="text-xl text-gray-500 dark:text-gray-400 self-end mb-1 ml-2">/{{ plan.get_duration_display }}</span>
+                        </div>
+                        
+                        <div class="space-y-4 mb-8">
+                            {% comment %} ตัวอย่างคุณสมบัติแพ็คเกจ - ในโปรเจคจริงจะแสดงจาก plan.description {% endcomment %}
+                            <div class="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-mint mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span class="text-gray-700 dark:text-gray-300">แผนออกกำลังกายเฉพาะบุคคล</span>
+                            </div>
+                            <div class="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-mint mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span class="text-gray-700 dark:text-gray-300">แผนโภชนาการเฉพาะบุคคล</span>
+                            </div>
+                            <div class="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-mint mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span class="text-gray-700 dark:text-gray-300">ติดตามความก้าวหน้า</span>
+                            </div>
+                            <div class="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-mint mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span class="text-gray-700 dark:text-gray-300">ส่วนลดสินค้า {{ forloop.counter0|add:5 }}%</span>
+                            </div>
+                            {% if forloop.counter >= 2 %}
+                                <div class="flex items-start">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-mint mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span class="text-gray-700 dark:text-gray-300">การสนับสนุนส่วนบุคคล</span>
+                                </div>
+                            {% endif %}
+                            {% if forloop.counter == 3 %}
+                                <div class="flex items-start">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-mint mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span class="text-gray-700 dark:text-gray-300">ปรึกษาโค้ชส่วนตัว</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <a href="{% url 'subscription_detail' plan.id %}" class="block w-full py-3 text-center rounded-xl font-bold 
+                            {% if forloop.counter == 1 %}
+                                bg-gradient-to-r from-mint to-teal text-rich-black hover:shadow-lg
+                            {% elif forloop.counter == 2 %}
+                                bg-gradient-to-r from-peach to-secondary-dark text-white hover:shadow-lg
+                            {% else %}
+                                bg-gradient-to-r from-blue-400 to-purple-500 text-white hover:shadow-lg
+                            {% endif %}
+                            transform hover:-translate-y-1 transition-all duration-300">
+                            สมัครเลย
+                        </a>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-span-3 text-center text-gray-500 dark:text-gray-400 py-16">
+                    <p class="text-2xl">ไม่มีแพ็คเกจที่แสดงในขณะนี้</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- ในไฟล์ subscription_list.html -->
+        <div class="feature-list mt-4">
+            <h4 class="text-lg font-semibold mb-2">ฟีเจอร์ที่รวมอยู่ในแพ็คเกจ:</h4>
+            <ul class="space-y-2">
+                <li class="flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-mint mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>แผนออกกำลังกายเฉพาะบุคคล</span>
+                </li>
+                <li class="flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-mint mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>แผนอาหารเฉพาะบุคคล</span>
+                </li>
+                <li class="flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-mint mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>การติดตามความก้าวหน้า</span>
+                </li>
+                <li class="flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-mint mt-0.5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>โปรแกรมโภชนาการ</span>
+                </li>
+            </ul>
+        </div>        
+
+        <!-- Testimonials -->
+        <div class="mt-24 max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">สิ่งที่สมาชิกของเราพูดถึง</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-6 animate-on-scroll">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-mint text-rich-black h-10 w-10 rounded-full flex items-center justify-center font-bold mr-4">
+                            A
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-900 dark:text-white">อรุณ สมิธ</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">สมาชิกมา 6 เดือน</p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="flex">
+                            {% for i in '12345'|make_list %}
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300">
+                        "แผนออกกำลังกายและอาหารเฉพาะบุคคลช่วยให้ผมบรรลุเป้าหมายในการลดน้ำหนัก ผมลดไปได้ 8 กิโลกรัมในเวลาเพียง 3 เดือน"
+                    </p>
                 </div>
                 
-                <div class="text-center mb-6">
-                    <span class="text-4xl font-bold text-blue-600">฿{{ plan.price }}</span>
-                    <span class="text-gray-600">/{{ plan.get_duration_display }}</span>
+                <!-- Testimonial 2 -->
+                <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-6 animate-on-scroll" style="animation-delay: 100ms;">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-peach text-rich-black h-10 w-10 rounded-full flex items-center justify-center font-bold mr-4">
+                            B
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-900 dark:text-white">เบญจา ใจดี</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">สมาชิกมา 1 ปี</p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="flex">
+                            {% for i in '12345'|make_list %}
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300">
+                        "ชอบที่ระบบมีการติดตามความก้าวหน้าที่ละเอียด ทำให้เห็นการเปลี่ยนแปลงของร่างกายชัดเจน และจูงใจให้ออกกำลังกายต่อเนื่อง"
+                    </p>
                 </div>
                 
-                <div class="flex-grow mb-6">
-                    <p class="text-gray-700">{{ plan.description }}</p>
+                <!-- Testimonial 3 -->
+                <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-6 animate-on-scroll" style="animation-delay: 200ms;">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-blue-400 text-rich-black h-10 w-10 rounded-full flex items-center justify-center font-bold mr-4">
+                            C
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-900 dark:text-white">ชาติชาย นักกีฬา</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">สมาชิกมา 3 เดือน</p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="flex">
+                            {% for i in '1234'|make_list %}
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                            {% endfor %}
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300 dark:text-gray-600" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300">
+                        "คุณภาพของอุปกรณ์ออกกำลังกายดีมาก และได้ส่วนลดพิเศษจากการเป็นสมาชิก คุ้มค่ามากสำหรับนักกีฬาอย่างผม"
+                    </p>
                 </div>
-                
-                <a href="{% url 'subscription_detail' plan.id %}" class="mt-auto text-center bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition block">
-                    ดูรายละเอียด
-                </a>
             </div>
-        {% empty %}
-            <div class="col-span-full text-center text-gray-500 py-10">
-                ไม่มีแพ็คเกจสมาชิกที่เปิดให้บริการในขณะนี้
+        </div>
+        
+        <!-- FAQ Section -->
+        <div class="mt-24 max-w-3xl mx-auto" x-data="{ activeTab: null }">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">คำถามที่พบบ่อย</h2>
+            
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden animate-on-scroll">
+                    <button @click="activeTab = activeTab === 1 ? null : 1" class="flex items-center justify-between w-full p-5 text-left">
+                        <span class="font-medium text-gray-900 dark:text-white">แพ็คเกจสมาชิกต่างกันอย่างไร?</span>
+                        <svg :class="{'rotate-180': activeTab === 1}" class="transform transition-transform w-6 h-6 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div x-show="activeTab === 1" class="px-5 pb-5 text-gray-700 dark:text-gray-300">
+                        <p>แพ็คเกจสมาชิกแต่ละประเภทมีระยะเวลาและสิทธิประโยชน์ที่แตกต่างกัน โดยแพ็คเกจระดับสูงขึ้นจะมีสิทธิพิเศษเพิ่มเติม เช่น ส่วนลดสินค้าที่มากขึ้น, การปรึกษาโค้ชส่วนตัว และการสนับสนุนเฉพาะบุคคล</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 2 -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden animate-on-scroll">
+                    <button @click="activeTab = activeTab === 2 ? null : 2" class="flex items-center justify-between w-full p-5 text-left">
+                        <span class="font-medium text-gray-900 dark:text-white">ฉันจะยกเลิกสมาชิกได้อย่างไร?</span>
+                        <svg :class="{'rotate-180': activeTab === 2}" class="transform transition-transform w-6 h-6 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div x-show="activeTab === 2" class="px-5 pb-5 text-gray-700 dark:text-gray-300">
+                        <p>คุณสามารถยกเลิกสมาชิกได้ทุกเมื่อผ่านหน้าโปรไฟล์ของคุณ ภายใต้หัวข้อ "การสมัครสมาชิก" การยกเลิกจะมีผลในรอบการชำระเงินถัดไป และคุณยังสามารถใช้สิทธิประโยชน์ได้จนกว่าจะหมดอายุสมาชิก</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 3 -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden animate-on-scroll">
+                    <button @click="activeTab = activeTab === 3 ? null : 3" class="flex items-center justify-between w-full p-5 text-left">
+                        <span class="font-medium text-gray-900 dark:text-white">แผนออกกำลังกายและอาหารปรับเปลี่ยนได้หรือไม่?</span>
+                        <svg :class="{'rotate-180': activeTab === 3}" class="transform transition-transform w-6 h-6 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div x-show="activeTab === 3" class="px-5 pb-5 text-gray-700 dark:text-gray-300">
+                        <p>ได้ คุณสามารถปรับเปลี่ยนแผนได้ตลอดเวลาตามเป้าหมายและความต้องการที่เปลี่ยนไป ระบบของเราจะสร้างแผนใหม่ที่เหมาะสมตามข้อมูลล่าสุดของคุณ</p>
+                    </div>
+                </div>
             </div>
-        {% endfor %}
+        </div>
+        
+        <!-- CTA Section -->
+        <div class="mt-24 bg-gradient-to-r from-mint to-teal rounded-3xl p-10 text-center max-w-4xl mx-auto animate-on-scroll">
+            <h2 class="text-3xl font-bold text-rich-black mb-4">พร้อมเริ่มต้นการเดินทางสู่สุขภาพที่ดีกว่า?</h2>
+            <p class="text-lg text-rich-black text-opacity-80 mb-8 max-w-2xl mx-auto">
+                สมัครสมาชิกวันนี้และเริ่มต้นการเปลี่ยนแปลงตัวเองเพื่อสุขภาพที่ดีขึ้น ด้วยแผนออกกำลังกายและโภชนาการที่ปรับแต่งเฉพาะคุณ
+            </p>
+            <a href="#" class="inline-block py-4 px-8 bg-rich-black text-white font-bold rounded-full hover:bg-opacity-90 transform hover:-translate-y-1 transition-all duration-300">
+                เริ่มต้นตอนนี้
+            </a>
+        </div>
     </div>
 {% endblock %}

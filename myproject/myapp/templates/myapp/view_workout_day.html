@@ -1,0 +1,100 @@
+<!-- templates/myapp/view_workout_day.html -->
+{% extends 'myapp/base.html' %}
+{% block title %}แผนออกกำลังกายวันที่ {{ workout_day.day_number }} - CareME{% endblock %}
+{% block content %}
+<div class="container mx-auto py-6">
+    <a href="{% url 'view_exercise_plan' %}" class="text-blue-600 hover:underline mb-6 inline-block">
+        &larr; กลับไปยังปฏิทินออกกำลังกาย
+    </a>
+    
+    <h1 class="text-2xl font-bold mb-2">แผนออกกำลังกายวันที่ {{ workout_day.day_number }}</h1>
+    <p class="text-lg mb-6">จุดเน้น: {{ workout_day.get_focus_display }}</p>
+    
+    <!-- รายการออกกำลังกาย -->
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
+        <div class="bg-blue-600 text-white p-4">
+            <h2 class="text-xl font-semibold">รายการออกกำลังกาย</h2>
+            <p class="text-sm text-blue-100">ทำตามลำดับเพื่อผลลัพธ์ที่ดีที่สุด</p>
+        </div>
+        
+        <div class="divide-y">
+            {% for exercise_item in workout_exercises %}
+                <div class="p-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-lg">{{ exercise_item.exercise.name }}</h3>
+                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                            {{ exercise_item.exercise.get_muscle_group_display }}
+                        </span>
+                    </div>
+                    
+                    <div class="mt-2 text-sm text-gray-600">{{ exercise_item.exercise.description }}</div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
+                        <div>
+                            <span class="text-sm font-medium">เซ็ต:</span>
+                            <span class="text-sm">{{ exercise_item.sets }}</span>
+                        </div>
+                        <div>
+                            <span class="text-sm font-medium">ครั้ง:</span>
+                            <span class="text-sm">{{ exercise_item.reps }}</span>
+                        </div>
+                        <div>
+                            <span class="text-sm font-medium">พัก:</span>
+                            <span class="text-sm">{{ exercise_item.rest_time }} วินาที</span>
+                        </div>
+                    </div>
+                    
+                    {% if exercise_item.notes %}
+                        <div class="mt-2 text-sm text-gray-600">
+                            <span class="font-medium">หมายเหตุ:</span> {{ exercise_item.notes }}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mt-3">
+                        <div class="text-sm font-medium">วิธีทำ:</div>
+                        <div class="text-sm text-gray-600 mt-1">{{ exercise_item.exercise.instructions }}</div>
+                    </div>
+                    
+                    {% if exercise_item.exercise.video_url %}
+                        <div class="mt-3">
+                            <a href="{{ exercise_item.exercise.video_url }}" target="_blank" class="text-blue-600 hover:underline text-sm">
+                                ดูวิดีโอสาธิต
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <div class="p-6 text-center text-gray-500">
+                    ไม่มีรายการออกกำลังกายในวันนี้
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- คำแนะนำ -->
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">คำแนะนำสำหรับวันนี้</h2>
+        
+        <div class="space-y-4">
+            <div>
+                <h3 class="font-medium">วอร์มอัพ (5-10 นาที)</h3>
+                <ul class="text-sm text-gray-600 list-disc list-inside mt-1">
+                    <li>เดินเร็วหรือวิ่งเหยาะๆ 5 นาที</li>
+                    <li>ยืดเหยียดกล้ามเนื้อส่วนที่จะออกกำลังวันนี้</li>
+                    <li>ทำท่าเคลื่อนไหวแบบไดนามิกเพื่อเตรียมข้อต่อ</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3 class="font-medium">การทำเซ็ตและครั้ง</h3>
+                <p class="text-sm text-gray-600 mt-1">พยายามทำให้ครบตามจำนวนเซ็ตและครั้งที่กำหนด ถ้าทำได้ง่ายเกินไป ให้เพิ่มน้ำหนักหรือความหนัก ถ้ายากเกินไป ให้ลดลงเพื่อรักษาฟอร์มที่ถูกต้อง</p>
+            </div>
+            
+            <div>
+                <h3 class="font-medium">คูลดาวน์ (5-10 นาที)</h3>
+                <p class="text-sm text-gray-600 mt-1">หลังออกกำลังกายเสร็จ ให้เดินช้าๆ 2-3 นาที และยืดเหยียดกล้ามเนื้อที่ใช้งานวันนี้ประมาณ 15-30 วินาทีต่อท่า</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

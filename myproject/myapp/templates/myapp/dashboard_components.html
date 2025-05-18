@@ -1,0 +1,44 @@
+<!-- ส่วนของ Dashboard ที่ปรับปรุงให้ Responsive ยิ่งขึ้น -->
+<!-- templates/myapp/dashboard_components.html -->
+{% load static %}
+
+<!-- Component สำหรับแสดง Messages -->
+{% macro show_messages %}
+    {% if messages %}
+        <div class="container mx-auto px-4 mb-6">
+            {% for message in messages %}
+                <div class="mb-4 p-4 {% if message.tags == 'success' %}bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100{% elif message.tags == 'error' %}bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100{% else %}bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100{% endif %} rounded-lg">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+<!-- Component สำหรับแสดง Progress Stats -->
+{% macro progress_stats user_profile %}
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
+        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-xl text-center">
+            <p class="text-gray-500 dark:text-gray-400 text-xs md:text-sm mb-1">น้ำหนักปัจจุบัน</p>
+            <p class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{{ user_profile.weight|default:"--" }} กก.</p>
+        </div>
+        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-xl text-center">
+            <p class="text-gray-500 dark:text-gray-400 text-xs md:text-sm mb-1">ส่วนสูง</p>
+            <p class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{{ user_profile.height|default:"--" }} ซม.</p>
+        </div>
+        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-xl text-center">
+            <p class="text-gray-500 dark:text-gray-400 text-xs md:text-sm mb-1">BMI</p>
+            <p class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+                {% if user_profile.weight and user_profile.height %}
+                    {{ user_profile.weight|floatformat:1|div:user_profile.height|div:user_profile.height|mult:10000|floatformat:1 }}
+                {% else %}
+                    --
+                {% endif %}
+            </p>
+        </div>
+        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-xl text-center">
+            <p class="text-gray-500 dark:text-gray-400 text-xs md:text-sm mb-1">พลังงานต่อวัน</p>
+            <p class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{{ user_profile.calculate_tdee|default:"--" }} kcal</p>
+        </div>
+    </div>
+{% endmacro %}

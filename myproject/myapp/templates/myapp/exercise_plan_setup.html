@@ -1,0 +1,100 @@
+<!-- templates/myapp/exercise_plan_setup.html -->
+{% extends 'myapp/base.html' %}
+{% block title %}สร้างแผนออกกำลังกาย - CareME{% endblock %}
+{% block content %}
+<div class="container mx-auto py-6">
+    <h1 class="text-2xl font-bold mb-6">สร้างแผนออกกำลังกายของคุณ</h1>
+    
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="bg-blue-600 text-white p-4">
+            <h2 class="text-xl font-semibold">แผนออกกำลังกายส่วนบุคคล</h2>
+            <p class="text-sm mt-1 text-blue-100">ปรับแต่งให้เหมาะกับเป้าหมายและไลฟ์สไตล์ของคุณ</p>
+        </div>
+        
+        <div class="p-6">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.goal.label }}</label>
+                        {{ form.goal }}
+                        {% if form.goal.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.goal.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.level.label }}</label>
+                        {{ form.level }}
+                        {% if form.level.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.level.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.days_per_week.label }}</label>
+                        {{ form.days_per_week }}
+                        {% if form.days_per_week.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.days_per_week.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.preferred_time.label }}</label>
+                        {{ form.preferred_time }}
+                        {% if form.preferred_time.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.preferred_time.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.training_focus.label }}</label>
+                        {{ form.training_focus }}
+                        {% if form.training_focus.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.training_focus.errors.0 }}</p>
+                        {% endif %}
+                        <p class="text-xs text-gray-500 mt-1">รูปแบบการฝึกที่เหมาะกับเป้าหมายของคุณ</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.available_equipment.label }}</label>
+                        {{ form.available_equipment }}
+                        {% if form.available_equipment.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.available_equipment.errors.0 }}</p>
+                        {% endif %}
+                        <p class="text-xs text-gray-500 mt-1">เช่น ดัมเบล บาร์โหน เครื่องออกกำลังกาย</p>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+                        สร้างแผนออกกำลังกาย
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- คำอธิบายเพิ่มเติม -->
+    <div class="mt-6 bg-white rounded-lg shadow-lg p-6">
+        <h3 class="text-xl font-semibold mb-4">คำอธิบายเพิ่มเติม</h3>
+        
+        <div class="space-y-4">
+            <div>
+                <h4 class="font-medium">เป้าหมายการออกกำลังกาย</h4>
+                <p class="text-sm text-gray-600">เลือกเป้าหมายที่ตรงกับความต้องการของคุณ เพื่อสร้างแผนที่เหมาะสม</p>
+            </div>
+            
+            <div>
+                <h4 class="font-medium">รูปแบบการฝึก</h4>
+                <ul class="text-sm text-gray-600 list-disc list-inside">
+                    <li><strong>ทั้งร่างกาย:</strong> ฝึกกล้ามเนื้อทั่วร่างกายในวันเดียว เหมาะสำหรับผู้ที่มีเวลาน้อย</li>
+                    <li><strong>ส่วนบน/ส่วนล่าง:</strong> แบ่งฝึกเป็นวันส่วนบนและวันส่วนล่าง เหมาะสำหรับการฝึก 4-6 วันต่อสัปดาห์</li>
+                    <li><strong>ดัน/ดึง/ขา:</strong> แบ่งฝึกตามการเคลื่อนไหว เหมาะสำหรับผู้ที่มีประสบการณ์</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

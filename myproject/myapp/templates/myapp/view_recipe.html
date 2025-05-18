@@ -1,0 +1,126 @@
+<!-- templates/myapp/view_recipe.html -->
+{% extends 'myapp/base.html' %}
+{% block title %}{{ recipe.name }} - CareME{% endblock %}
+{% block content %}
+<div class="container mx-auto py-6">
+    <a href="javascript:history.back()" class="text-green-600 hover:underline mb-6 inline-block">
+        &larr; กลับไปยังแผนอาหาร
+    </a>
+    
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="md:flex">
+            <!-- รูปภาพอาหาร -->
+            <div class="md:w-1/3">
+                {% if recipe.image %}
+                    <img src="{{ recipe.image.url }}" alt="{{ recipe.name }}" class="w-full h-full object-cover">
+                {% else %}
+                    <div class="bg-gray-200 w-full h-full min-h-60 flex items-center justify-center">
+                        <span class="text-gray-500">ไม่มีรูปภาพ</span>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- ข้อมูลเบื้องต้น -->
+            <div class="md:w-2/3 p-6">
+                <div class="flex justify-between items-start">
+                    <h1 class="text-2xl font-bold">{{ recipe.name }}</h1>
+                    <span class="bg-green-100 text-green-800 text-sm px-2 py-1 rounded-full">
+                        {{ recipe.get_meal_type_display }}
+                    </span>
+                </div>
+                
+                <p class="text-gray-600 mt-2">{{ recipe.description }}</p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                    <div>
+                        <span class="text-sm font-medium">เวลาเตรียม:</span>
+                        <span class="text-sm">{{ recipe.prep_time }} นาที</span>
+                    </div>
+                    <div>
+                        <span class="text-sm font-medium">เวลาปรุง:</span>
+                        <span class="text-sm">{{ recipe.cook_time }} นาที</span>
+                    </div>
+                    <div>
+                        <span class="text-sm font-medium">สำหรับ:</span>
+                        <span class="text-sm">{{ recipe.servings }} ที่</span>
+                    </div>
+                    <div>
+                        <span class="text-sm font-medium">แบบอาหาร:</span>
+                        <span class="text-sm">{{ recipe.get_diet_type_display }}</span>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h2 class="text-lg font-semibold mb-2">คุณค่าทางโภชนาการ (ต่อที่)</h2>
+                    <div class="flex space-x-6">
+                        <div>
+                            <span class="text-sm font-medium">แคลอรี่:</span>
+                            <span class="text-sm">{{ recipe.calories_per_serving }}</span>
+                        </div>
+                        <div>
+                            <span class="text-sm font-medium">โปรตีน:</span>
+                            <span class="text-sm">{{ recipe.protein }}g</span>
+                        </div>
+                        <div>
+                            <span class="text-sm font-medium">คาร์บ:</span>
+                            <span class="text-sm">{{ recipe.carbs }}g</span>
+                        </div>
+                        <div>
+                            <span class="text-sm font-medium">ไขมัน:</span>
+                            <span class="text-sm">{{ recipe.fat }}g</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ส่วนผสมและวิธีทำ -->
+        <div class="p-6 md:flex border-t">
+            <!-- ส่วนผสม -->
+            <div class="md:w-1/3 mb-6 md:mb-0 md:pr-6">
+                <h2 class="text-xl font-semibold mb-4">ส่วนผสม</h2>
+                <ul class="space-y-2">
+                    {% for ingredient in ingredients %}
+                        <li class="flex">
+                            <span class="text-green-600 mr-2">•</span>
+                            <span>{{ ingredient.amount }} {{ ingredient.name }}</span>
+                        </li>
+                    {% empty %}
+                        <li class="text-gray-500">ไม่มีข้อมูลส่วนผสม</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <!-- วิธีทำ -->
+            <div class="md:w-2/3 md:border-l md:pl-6">
+                <h2 class="text-xl font-semibold mb-4">วิธีทำ</h2>
+                
+                {% if recipe.instructions %}
+                    <div class="space-y-4">
+                        {% for instruction in recipe.instructions|splitlines %}
+                            {% if instruction|strip %}
+                                <div class="flex">
+                                    <span class="bg-green-600 text-white w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
+                                        {{ forloop.counter }}
+                                    </span>
+                                    <p>{{ instruction|strip }}</p>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-500">ไม่มีข้อมูลวิธีทำ</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- เคล็ดลับ -->
+        <div class="bg-green-50 p-6 border-t">
+            <h2 class="text-xl font-semibold mb-2">เคล็ดลับ</h2>
+            <p class="text-sm text-gray-600">
+                เพื่อรสชาติที่ดีที่สุด ใช้วัตถุดิบที่สดใหม่เสมอ คุณสามารถเก็บอาหารนี้ในตู้เย็นได้ไม่เกิน 3 วัน หรือแช่แข็งไว้ได้นานถึง 1 เดือน
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

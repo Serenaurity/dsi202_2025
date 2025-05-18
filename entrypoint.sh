@@ -11,6 +11,8 @@ cd myproject
 
 # If you'd like to automatically configure the DB settings, you can add sed commands here.
 # For now, we assume you're manually configuring settings.py to use PostgreSQL.
+# ตั้งค่า Django settings
+export DJANGO_SETTINGS_MODULE=myproject.settings
 
 # Run migrations
 python manage.py migrate

@@ -1,0 +1,258 @@
+/* static/css/custom.css */
+
+/* === Fonts === */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600;700;800&display=swap');
+
+/* === Base Variables === */
+:root {
+  --color-mint: #84E8C5;
+  --color-teal: #3ABDB8;
+  --color-peach: #FF9E7A;
+  --color-secondary: #FF7E52;
+  --color-rich-black: #0A0D14;
+  --color-bg-light: #ffffff;
+  --color-bg-dark: #0A0D14;
+  --color-text-light: #333333;
+  --color-text-dark: #F0F0F0;
+  
+  --font-sans: 'Inter', 'Noto Sans Thai', sans-serif;
+  --font-display: 'Druk', 'Noto Sans Thai', sans-serif;
+}
+
+/* === Base Styles === */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* === Dark Mode === */
+.dark {
+  --color-primary: var(--color-mint);
+  --color-secondary: var(--color-peach);
+  color: var(--color-text-dark);
+  background-color: var(--color-bg-dark);
+}
+
+/* === Custom Gradient Effects === */
+.gradient-text {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.mint-gradient {
+  background-image: linear-gradient(to right, var(--color-mint), var(--color-teal));
+}
+
+.peach-gradient {
+  background-image: linear-gradient(to right, var(--color-peach), var(--color-secondary));
+}
+
+/* === Animations === */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Animation Delays */
+.delay-0 { animation-delay: 0ms; }
+.delay-1 { animation-delay: 100ms; }
+.delay-2 { animation-delay: 200ms; }
+.delay-3 { animation-delay: 300ms; }
+.delay-4 { animation-delay: 400ms; }
+.delay-5 { animation-delay: 500ms; }
+.delay-6 { animation-delay: 600ms; }
+.delay-7 { animation-delay: 700ms; }
+.delay-8 { animation-delay: 800ms; }
+.delay-9 { animation-delay: 900ms; }
+.delay-10 { animation-delay: 1000ms; }
+
+/* === Custom Components === */
+.card {
+  background-color: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.dark .card {
+  background-color: var(--color-bg-dark);
+}
+
+.card:hover {
+  transform: translateY(-0.25rem);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.btn-primary {
+  background-image: linear-gradient(to right, var(--color-mint), var(--color-teal));
+  color: var(--color-rich-black);
+  font-weight: bold;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  transform: translateY(0);
+  transition-property: all;
+  transition-duration: 300ms;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-0.25rem);
+}
+
+.btn-secondary {
+  background-image: linear-gradient(to right, var(--color-peach), var(--color-secondary));
+  color: white;
+  font-weight: bold;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  transform: translateY(0);
+  transition-property: all;
+  transition-duration: 300ms;
+}
+
+.btn-secondary:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-0.25rem);
+}
+
+.btn-outline {
+  border: 2px solid var(--color-mint);
+  color: var(--color-mint);
+  font-weight: bold;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  transition-property: all;
+  transition-duration: 300ms;
+}
+
+.btn-outline:hover {
+  background-color: rgba(132, 232, 197, 0.1); /* rgba version of mint color with 0.1 opacity */
+}
+
+/* === Custom Cursor === */
+.custom-cursor {
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: rgba(58, 189, 184, 0.5);
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s, background-color 0.3s;
+}
+
+/* === Line Clamp === */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  max-height: 1.5em; /* Fallback: assumes line-height is 1.5em */
+  text-overflow: ellipsis;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  max-height: 3em; /* Fallback: assumes line-height is 1.5em */
+  text-overflow: ellipsis;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  max-height: 4.5em; /* Fallback: assumes line-height is 1.5em */
+  text-overflow: ellipsis;
+}
+
+/* === Scroll Animation === */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* === Custom Scrollbar === */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-mint);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-teal);
+}
+
+/* === Skeleton Loading === */
+.skeleton {
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: rgba(200, 200, 200, 0.1);
+  }
+  50% {
+    background-color: rgba(200, 200, 200, 0.3);
+  }
+  100% {
+    background-color: rgba(200, 200, 200, 0.1);
+  }
+}
+
+.dark .skeleton {
+  animation: skeleton-loading-dark 1.5s infinite;
+}
+
+@keyframes skeleton-loading-dark {
+  0% {
+    background-color: rgba(40, 40, 40, 0.5);
+  }
+  50% {
+    background-color: rgba(60, 60, 60, 0.8);
+  }
+  100% {
+    background-color: rgba(40, 40, 40, 0.5);
+  }
+}

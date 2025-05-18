@@ -1,0 +1,93 @@
+<!-- templates/myapp/community_forum.html (ตัวอย่างหน้าชุมชน) -->
+{% extends 'myapp/base.html' %}
+{% block title %}ชุมชน CareME{% endblock %}
+{% block content %}
+<div class="container mx-auto py-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">ชุมชน CareME</h1>
+        <a href="#" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            สร้างกระทู้ใหม่
+        </a>
+    </div>
+    
+    <div class="flex flex-wrap md:flex-nowrap gap-6">
+        <!-- หัวข้อหลัก -->
+        <div class="w-full md:w-3/4">
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="bg-gray-50 px-4 py-3 border-b">
+                    <h2 class="font-semibold">หัวข้อการสนทนา</h2>
+                </div>
+                <div class="divide-y">
+                    {% for topic in topics %}
+                    <div class="p-4 hover:bg-gray-50">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-medium">{{ topic.name }}</h3>
+                                <p class="text-sm text-gray-600 mt-1">{{ topic.description }}</p>
+                            </div>
+                            <div class="text-sm text-gray-500">
+                                {{ topic.threads.count }} กระทู้
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <a href="#" class="text-blue-600 hover:underline text-sm">เข้าดูหัวข้อ</a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="p-6 text-center text-gray-500">
+                        ยังไม่มีหัวข้อการสนทนา
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- กระทู้ยอดนิยม -->
+        <div class="w-full md:w-1/4">
+            <div class="bg-white rounded-lg shadow">
+                <div class="bg-gray-50 px-4 py-3 border-b">
+                    <h2 class="font-semibold">กระทู้ยอดนิยม</h2>
+                </div>
+                <div class="p-4">
+                    <ul class="space-y-3">
+                        {% for thread in popular_threads %}
+                        <li>
+                            <a href="#" class="text-blue-600 hover:underline">
+                                {{ thread.title }}
+                            </a>
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>โดย {{ thread.author.username }}</span>
+                                <span>{{ thread.reply_count }} คำตอบ</span>
+                            </div>
+                        </li>
+                        {% empty %}
+                        <li class="text-center text-gray-500 py-2">
+                            ยังไม่มีกระทู้
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- ข้อมูลสมาชิก -->
+            <div class="bg-white rounded-lg shadow mt-4 p-4">
+                <h3 class="font-medium mb-2">สถิติชุมชน</h3>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span>สมาชิกทั้งหมด:</span>
+                        <span>{{ user_count }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>กระทู้ทั้งหมด:</span>
+                        <span>{{ thread_count }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>ข้อความทั้งหมด:</span>
+                        <span>{{ reply_count }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

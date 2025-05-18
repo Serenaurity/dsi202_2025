@@ -1,0 +1,100 @@
+<!-- templates/myapp/view_meal_plan.html -->
+{% extends 'myapp/base.html' %}
+{% block title %}แผนอาหารของฉัน - CareME{% endblock %}
+{% block content %}
+<div class="container mx-auto py-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">แผนอาหารของฉัน</h1>
+        <a href="{% url 'meal_plan' %}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+            แก้ไขแผน
+        </a>
+    </div>
+    
+    <!-- ข้อมูลแผน -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <h3 class="text-sm font-medium text-gray-500">เป้าหมาย</h3>
+                <p class="mt-1">{{ meal_plan.get_goal_display }}</p>
+            </div>
+            <div>
+                <h3 class="text-sm font-medium text-gray-500">แคลอรี่ต่อวัน</h3>
+                <p class="mt-1">{{ meal_plan.daily_calories }} แคลอรี่</p>
+            </div>
+            <div>
+                <h3 class="text-sm font-medium text-gray-500">จำนวนมื้อต่อวัน</h3>
+                <p class="mt-1">{{ meal_plan.meals_per_day }} มื้อ</p>
+            </div>
+        </div>
+        
+        <!-- สารอาหารหลัก -->
+        <!-- อีกรูปแบบหนึ่งที่ไม่ต้องใช้ custom filter -->
+        <div class="mt-6">
+            <h3 class="text-sm font-medium text-gray-500 mb-2">สัดส่วนสารอาหาร</h3>
+    
+            <div class="h-6 w-full bg-gray-200 rounded-full overflow-hidden">
+                <div class="h-full bg-blue-500" style="width: 33%; float: left;"></div>
+                <div class="h-full bg-green-500" style="width: 33%; float: left;"></div>
+                <div class="h-full bg-yellow-500" style="width: 34%; float: left;"></div>
+            </div>
+            <div class="flex justify-between text-xs mt-1">
+                <span>โปรตีน: {{ meal_plan.protein_ratio }}% ({{ macros.protein }}g)</span>
+                <span>คาร์โบไฮเดรต: {{ meal_plan.carb_ratio }}% ({{ macros.carbs }}g)</span>
+                <span>ไขมัน: {{ meal_plan.fat_ratio }}% ({{ macros.fat }}g)</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ปฏิทินแผนอาหาร -->
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
+        <div class="bg-green-600 text-white p-4">
+            <h2 class="text-xl font-semibold">ปฏิทินอาหาร</h2>
+            <p class="text-sm text-green-100">เริ่มวันที่ {{ meal_plan.start_date|date:"d/m/Y" }}</p>
+        </div>
+        
+        <div class="p-4">
+            {% for week in calendar_days|slice:":28"|groupby:"week_number" %}
+                <h3 class="font-medium text-lg mt-4 mb-2">สัปดาห์ที่ {{ week.grouper }}</h3>
+                <div class="grid grid-cols-7 gap-2">
+                    {% for day in week.list %}
+                        <div class="border rounded-lg overflow-hidden {% if day.is_today %}ring-2 ring-green-500{% endif %}">
+                            <div class="bg-gray-100 p-2 text-center border-b">
+                                <span class="text-sm font-medium">{{ day.date|date:"D" }}</span>
+                                <p class="text-xs">{{ day.date|date:"d/m" }}</p>
+                            </div>
+                            <div class="p-2 text-center min-h-24 flex flex-col items-center justify-center">
+                                <span class="font-medium">แผนมื้ออาหาร</span>
+                                <a href="{% url 'view_daily_meal' day.daily_meal.id %}" class="text-xs text-green-600 hover:underline mt-1 block">
+                                    ดูรายละเอียด
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- คำแนะนำเพิ่มเติม -->
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">คำแนะนำเพิ่มเติม</h2>
+        
+        <div class="space-y-4">
+            <div>
+                <h3 class="font-medium">การดื่มน้ำ</h3>
+                <p class="text-sm text-gray-600">ควรดื่มน้ำอย่างน้อย 8 แก้วต่อวัน (ประมาณ 2 ลิตร) เพื่อช่วยในการย่อยอาหาร การขับถ่าย และการทำงานของร่างกาย</p>
+            </div>
+            
+            <div>
+                <h3 class="font-medium">การรับประทานอาหาร</h3>
+                <p class="text-sm text-gray-600">รับประทานอาหารช้าๆ เคี้ยวให้ละเอียด และสังเกตความอิ่ม หลีกเลี่ยงการรับประทานอาหารหน้าจอหรือขณะเร่งรีบ</p>
+            </div>
+            
+            <div>
+                <h3 class="font-medium">การเตรียมอาหาร</h3>
+                <p class="text-sm text-gray-600">วางแผนและเตรียมอาหารล่วงหน้าเพื่อช่วยให้คุณทำตามแผนอาหารได้ง่ายขึ้น รวมทั้งประหยัดเวลาและเงิน</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

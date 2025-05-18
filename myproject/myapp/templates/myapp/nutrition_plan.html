@@ -1,0 +1,147 @@
+<!-- templates/myapp/nutrition_plan.html -->
+{% extends 'myapp/base.html' %}
+{% block title %}แผนโภชนาการของฉัน - CareME{% endblock %}
+{% block content %}
+<div class="container mx-auto py-6">
+    <h1 class="text-2xl font-bold mb-6">แผนโภชนาการของฉัน</h1>
+    
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
+        <div class="bg-blue-600 text-white p-4">
+            <h2 class="text-xl font-semibold">แนวทางโภชนาการ</h2>
+            <p class="text-sm mt-1 text-blue-100">ปรับแต่งให้เหมาะกับเป้าหมายของคุณ</p>
+        </div>
+        
+        <div class="p-6">
+            <form method="post">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">เป้าหมายของคุณ</label>
+                        <select name="goal" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="weight_loss" {% if nutrition_plan.goal == 'weight_loss' %}selected{% endif %}>ลดน้ำหนัก</option>
+                            <option value="muscle_gain" {% if nutrition_plan.goal == 'muscle_gain' %}selected{% endif %}>เพิ่มกล้ามเนื้อ</option>
+                            <option value="maintenance" {% if nutrition_plan.goal == 'maintenance' %}selected{% endif %}>รักษาสภาพ</option>
+                            <option value="general_health" {% if nutrition_plan.goal == 'general_health' %}selected{% endif %}>สุขภาพทั่วไป</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">เป้าหมายแคลอรี่ต่อวัน</label>
+                        <input type="number" name="calorie_target" value="{{ nutrition_plan.calorie_target }}" 
+                               class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ข้อจำกัดด้านอาหาร</label>
+                        <textarea name="dietary_restriction" rows="3" 
+                                  class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">{{ nutrition_plan.dietary_restriction }}</textarea>
+                        <p class="text-xs text-gray-500 mt-1">ระบุอาหารที่แพ้หรือต้องหลีกเลี่ยง</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">สัดส่วนสารอาหาร</label>
+                        <div class="space-y-2">
+                            <div class="flex items-center">
+                                <span class="w-24 text-sm">โปรตีน:</span>
+                                <input type="range" name="protein_ratio" min="10" max="60" value="{{ nutrition_plan.protein_ratio }}" 
+                                       class="flex-grow mr-2" oninput="this.nextElementSibling.value = this.value + '%'">
+                                <output class="w-16 text-sm text-right">{{ nutrition_plan.protein_ratio }}%</output>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-24 text-sm">คาร์โบไฮเดรต:</span>
+                                <input type="range" name="carb_ratio" min="10" max="60" value="{{ nutrition_plan.carb_ratio }}" 
+                                       class="flex-grow mr-2" oninput="this.nextElementSibling.value = this.value + '%'">
+                                <output class="w-16 text-sm text-right">{{ nutrition_plan.carb_ratio }}%</output>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-24 text-sm">ไขมัน:</span>
+                                <input type="range" name="fat_ratio" min="10" max="60" value="{{ nutrition_plan.fat_ratio }}" 
+                                       class="flex-grow mr-2" oninput="this.nextElementSibling.value = this.value + '%'">
+                                <output class="w-16 text-sm text-right">{{ nutrition_plan.fat_ratio }}%</output>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+                        บันทึกแผนโภชนาการ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- แผนมื้ออาหารตัวอย่าง -->
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="bg-green-600 text-white p-4">
+            <h2 class="text-xl font-semibold">แผนมื้ออาหารแนะนำ</h2>
+            <p class="text-sm mt-1 text-green-100">ตามเป้าหมาย: {{ nutrition_plan.get_goal_display }}</p>
+        </div>
+        
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-semibold text-center pb-2 border-b">มื้อเช้า</h3>
+                    <ul class="mt-3 space-y-2">
+                        <li class="flex justify-between">
+                            <span>โยเกิร์ตกรีกกับผลไม้</span>
+                            <span class="text-gray-600">300 kcal</span>
+                        </li>
+                        <li class="flex justify-between">
+                            <span>ไข่ต้ม 2 ฟอง</span>
+                            <span class="text-gray-600">140 kcal</span>
+                        </li>
+                        <li class="flex justify-between">
+                            <span>ขนมปังโฮลวีต 1 แผ่น</span>
+                            <span class="text-gray-600">80 kcal</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-semibold text-center pb-2 border-b">มื้อกลางวัน</h3>
+                    <ul class="mt-3 space-y-2">
+                        <li class="flex justify-between">
+                            <span>อกไก่ย่าง 100 กรัม</span>
+                            <span class="text-gray-600">165 kcal</span>
+                        </li>
+                        <li class="flex justify-between">
+                            <span>สลัดผัก</span>
+                            <span class="text-gray-600">120 kcal</span>
+                        </li>
+                        <li class="flex justify-between">
+                            <span>ข้าวกล้อง 1 ทัพพี</span>
+                            <span class="text-gray-600">150 kcal</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-semibold text-center pb-2 border-b">มื้อเย็น</h3>
+                    <ul class="mt-3 space-y-2">
+                        <li class="flex justify-between">
+                            <span>ปลาแซลมอน 120 กรัม</span>
+                            <span class="text-gray-600">240 kcal</span>
+                        </li>
+                        <li class="flex justify-between">
+                            <span>ผักนึ่ง</span>
+                            <span class="text-gray-600">100 kcal</span>
+                        </li>
+                        <li class="flex justify-between">
+                            <span>มันฝรั่งอบ</span>
+                            <span class="text-gray-600">130 kcal</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-6 text-center">
+                <a href="#" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition inline-block">
+                    รับแผนอาหารเต็มรูปแบบ
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

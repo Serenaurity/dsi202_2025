@@ -1,5 +1,6 @@
 Django==4.2
 django-extensions==3.2.3
+django-allauth==0.50.0
 psycopg2-binary==2.9.6
 jupyterlab==2.2.9
 notebook==6.4.12

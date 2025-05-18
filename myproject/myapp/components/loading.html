@@ -1,0 +1,13 @@
+<!-- /myproject/myapp/templates/myapp/components/loading.html -->
+{% comment %}
+    Component แสดงสถานะ Loading
+    Usage: 
+    {% include 'myapp/components/loading.html' with text="กำลังโหลดข้อมูล" %}
+    หรือ
+    {% include 'myapp/components/loading.html' %} (จะใช้ข้อความ default)
+{% endcomment %}
+
+<div class="flex flex-col items-center justify-center py-12">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-mint mb-4"></div>
+    <p class="text-gray-600 dark:text-gray-400">{{ text|default:"กำลังโหลด..." }}</p>
+</div>
