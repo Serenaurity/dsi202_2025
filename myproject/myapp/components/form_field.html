@@ -1,0 +1,23 @@
+<!-- myapp/templates/myapp/components/form_field.html -->
+{% comment %}
+    Component สำหรับแสดงฟิลด์ในฟอร์ม
+    Usage: 
+    {% include 'myapp/components/form_field.html' with 
+        field=form.field_name 
+        required=True|False %}
+{% endcomment %}
+
+<div>
+    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        {{ field.label }}{% if required %} <span class="text-red-500">*</span>{% endif %}
+    </label>
+    {{ field }}
+    {% if field.errors %}
+        {% for error in field.errors %}
+            <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+        {% endfor %}
+    {% endif %}
+    {% if field.help_text %}
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ field.help_text }}</p>
+    {% endif %}
+</div>

@@ -1,0 +1,28 @@
+<!-- myapp/templates/myapp/components/breadcrumbs.html -->
+{% comment %}
+    Component สำหรับแสดง Breadcrumbs
+    Usage: 
+    {% include 'myapp/components/breadcrumbs.html' with 
+        items=breadcrumbs %}
+    
+    breadcrumbs คือ list ของ dictionary ที่มีคีย์ 'name' และ 'url' เช่น:
+    [
+        {'name': 'หน้าแรก', 'url': 'home'},
+        {'name': 'สินค้า', 'url': 'product_list'},
+        {'name': 'รายละเอียดสินค้า', 'url': None}  # ถ้าเป็นหน้าปัจจุบัน url เป็น None
+    ]
+{% endcomment %}
+
+<nav class="flex mb-6 text-gray-600 dark:text-gray-400">
+    {% for item in items %}
+        {% if not forloop.first %}
+            <span class="mx-2">/</span>
+        {% endif %}
+        
+        {% if item.url %}
+            <a href="{% url item.url %}" class="hover:text-mint transition-colors">{{ item.name }}</a>
+        {% else %}
+            <span class="text-gray-900 dark:text-white">{{ item.name }}</span>
+        {% endif %}
+    {% endfor %}
+</nav>

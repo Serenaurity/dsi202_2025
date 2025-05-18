@@ -316,11 +316,19 @@ class ProductListView(ListView):
         return queryset
 
 
-class ProductDetailView(DetailView):
-    """แสดงรายละเอียดสินค้า"""
-    model = Product
-    template_name = 'myapp/product_detail.html'
-    context_object_name = 'product'
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    breadcrumbs = [
+        {'name': 'หน้าแรก', 'url': 'home'},
+        {'name': 'สินค้า', 'url': 'product_list'},
+        {'name': product.name, 'url': None},
+    ]
+    
+    context = {
+        'product': product,
+        'breadcrumbs': breadcrumbs,
+    }
+    return render(request, 'myapp/product_detail.html', context)
 
 
 @login_required
