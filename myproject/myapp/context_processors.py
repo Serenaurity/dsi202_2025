@@ -1,5 +1,5 @@
 # /myproject/myapp/context_processors.py
-
+from django.db import models
 from .models import Order, OrderItem
 
 def cart_items_count(request):
