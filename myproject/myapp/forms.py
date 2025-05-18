@@ -1,86 +1,113 @@
-# forms.py - เพิ่มฟอร์มสำหรับกรอกข้อมูล
-
+# myproject/myapp/forms.py
 from django import forms
-from .models import UserProfile, ExercisePlan, MealPlan, NutritionPlan
-# เพิ่มใน forms.py
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from .models import (
+    UserProfile, Product, Order, Review, 
+    ExercisePlan, MealPlan, Progress
+)
 
-class CustomUserCreationForm(UserCreationForm):
+class BaseForm(forms.ModelForm):
+    """Base form class สำหรับลดความซ้ำซ้อนของโค้ด"""
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # ปรับแต่ง widget สำหรับทุกฟิลด์
+        for field_name, field in self.fields.items():
+            if isinstance(field.widget, forms.TextInput) or isinstance(field.widget, forms.EmailInput):
+                field.widget.attrs.update({'class': 'form-control rounded-lg'})
+            elif isinstance(field.widget, forms.Textarea):
+                field.widget.attrs.update({'class': 'form-control rounded-lg', 'rows': 3})
+            elif isinstance(field.widget, forms.Select):
+                field.widget.attrs.update({'class': 'form-select rounded-lg'})
+            elif isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs.update({'class': 'form-check-input'})
+            elif isinstance(field.widget, forms.DateInput):
+                field.widget = forms.DateInput(attrs={
+                    'class': 'form-control rounded-lg',
+                    'type': 'date'
+                })
+
+class LoginForm(AuthenticationForm):
+    username = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form-control rounded-lg',
+        'placeholder': 'Username',
+    }))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={
+        'class': 'form-control rounded-lg',
+        'placeholder': 'Password',
+    }))
+
+class RegisterForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+    
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # เพิ่มคลาสให้กับ input fields สำหรับ Tailwind CSS
-        for field_name, field in self.fields.items():
-            field.widget.attrs['class'] = 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500'
+        # ปรับแต่ง widgets ในวิธีเดียว แทนที่จะกำหนดทีละฟิลด์
+        form_fields = ['username', 'email', 'password1', 'password2']
+        for field in form_fields:
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control rounded-lg',
+                'placeholder': self.fields[field].label,
+            })
 
-class UserProfileForm(forms.ModelForm):
-    birth_date = forms.DateField(
-        widget=forms.DateInput(attrs={'type': 'date'}),
-        help_text="วันเกิดของคุณ",
-        label="วันเกิด"
-    )
-    
+class UserProfileForm(BaseForm):
     class Meta:
         model = UserProfile
-        fields = ['birth_date', 'gender', 'height', 'weight', 'activity_level', 'medical_conditions']
-        labels = {
-            'gender': 'เพศ',
-            'height': 'ความสูง (ซม.)',
-            'weight': 'น้ำหนัก (กก.)',
-            'activity_level': 'ระดับการออกกำลังกาย',
-            'medical_conditions': 'โรคประจำตัวหรือข้อจำกัดทางการแพทย์'
-        }
+        fields = ['date_of_birth', 'gender', 'height', 'weight', 'goal', 'activity_level', 'profile_picture']
+        
+class ProductSearchForm(forms.Form):
+    query = forms.CharField(required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control rounded-lg',
+        'placeholder': 'Search products...',
+    }))
+    category = forms.ChoiceField(required=False, choices=[('', 'All Categories')] + Product.CATEGORY_CHOICES, 
+                                widget=forms.Select(attrs={'class': 'form-select rounded-lg'}))
+    
+    min_price = forms.DecimalField(required=False, min_value=0, widget=forms.NumberInput(attrs={
+        'class': 'form-control rounded-lg',
+        'placeholder': 'Min Price',
+    }))
+    max_price = forms.DecimalField(required=False, min_value=0, widget=forms.NumberInput(attrs={
+        'class': 'form-control rounded-lg',
+        'placeholder': 'Max Price',
+    }))
 
-class ExercisePlanForm(forms.ModelForm):
+class ReviewForm(BaseForm):
     class Meta:
-        model = ExercisePlan
-        fields = ['goal', 'level', 'days_per_week', 'preferred_time', 'training_focus', 'available_equipment']
-        labels = {
-            'goal': 'เป้าหมายการออกกำลังกาย',
-            'level': 'ระดับความสามารถ',
-            'days_per_week': 'จำนวนวันออกกำลังกายต่อสัปดาห์',
-            'preferred_time': 'ช่วงเวลาที่ต้องการออกกำลังกาย',
-            'training_focus': 'รูปแบบการฝึก',
-            'available_equipment': 'มีอุปกรณ์ออกกำลังกายที่บ้าน'
-        }
+        model = Review
+        fields = ['rating', 'comment']
 
-class MealPlanForm(forms.ModelForm):
+class ProgressForm(BaseForm):
     class Meta:
-        model = MealPlan
-        fields = ['goal', 'daily_calories', 'protein_ratio', 'carb_ratio', 'fat_ratio', 'meals_per_day', 'dietary_restrictions', 'allergies']
-        labels = {
-            'goal': 'เป้าหมายโภชนาการ',
-            'daily_calories': 'แคลอรี่ต่อวัน',
-            'protein_ratio': 'สัดส่วนโปรตีน (%)',
-            'carb_ratio': 'สัดส่วนคาร์โบไฮเดรต (%)',
-            'fat_ratio': 'สัดส่วนไขมัน (%)',
-            'meals_per_day': 'จำนวนมื้ออาหารต่อวัน',
-            'dietary_restrictions': 'ข้อจำกัดด้านอาหาร',
-            'allergies': 'อาหารที่แพ้'
-        }
-        widgets = {
-            'protein_ratio': forms.NumberInput(attrs={'min': 10, 'max': 50}),
-            'carb_ratio': forms.NumberInput(attrs={'min': 10, 'max': 70}),
-            'fat_ratio': forms.NumberInput(attrs={'min': 10, 'max': 50}),
-        }
+        model = Progress
+        fields = ['weight', 'body_fat', 'chest', 'waist', 'arms', 'legs', 'notes']
 
-# เพิ่มคลาสนี้ลงในไฟล์ forms.py
-class NutritionPreferencesForm(forms.ModelForm):
-    class Meta:
-        model = NutritionPlan
-        fields = ['goal', 'calorie_target', 'protein_ratio', 'carb_ratio', 'fat_ratio', 'dietary_restriction']
-        labels = {
-            'goal': 'เป้าหมาย',
-            'calorie_target': 'เป้าหมายแคลอรี่ต่อวัน',
-            'protein_ratio': 'สัดส่วนโปรตีน (%)',
-            'carb_ratio': 'สัดส่วนคาร์โบไฮเดรต (%)',
-            'fat_ratio': 'สัดส่วนไขมัน (%)',
-            'dietary_restriction': 'ข้อจำกัดด้านอาหาร'
-        }
-        widgets = {
-            'dietary_restriction': forms.Textarea(attrs={'rows': 3}),
-        }
+# ฟอร์มสำหรับกรองแผนออกกำลังกาย
+class ExercisePlanFilterForm(forms.Form):
+    GOAL_CHOICES = [('', 'All Goals')] + ExercisePlan.GOAL_CHOICES
+    DURATION_CHOICES = [
+        ('', 'All Durations'),
+        ('4', '4 Weeks'),
+        ('8', '8 Weeks'),
+        ('12', '12 Weeks'),
+    ]
+    
+    goal = forms.ChoiceField(choices=GOAL_CHOICES, required=False, 
+                            widget=forms.Select(attrs={'class': 'form-select rounded-lg'}))
+    duration = forms.ChoiceField(choices=DURATION_CHOICES, required=False,
+                                widget=forms.Select(attrs={'class': 'form-select rounded-lg'}))
+
+# ฟอร์มสำหรับกรองแผนอาหาร
+class MealPlanFilterForm(forms.Form):
+    GOAL_CHOICES = [('', 'All Goals')] + MealPlan.GOAL_CHOICES
+    DIET_TYPE_CHOICES = [('', 'All Diet Types')] + MealPlan.DIET_TYPE_CHOICES
+    
+    goal = forms.ChoiceField(choices=GOAL_CHOICES, required=False,
+                            widget=forms.Select(attrs={'class': 'form-select rounded-lg'}))
+    diet_type = forms.ChoiceField(choices=DIET_TYPE_CHOICES, required=False,
+                                widget=forms.Select(attrs={'class': 'form-select rounded-lg'}))
