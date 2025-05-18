@@ -5,7 +5,7 @@ from itertools import groupby
 register = template.Library()
 
 @register.filter
-def mult(value, arg):
+def multiply(value, arg):
     """คูณค่าด้วยอาร์กิวเมนต์"""
     try:
         return float(value) * float(arg)
@@ -68,14 +68,6 @@ def div(value, arg):
         return float(value) / float(arg)
     except (ValueError, TypeError, ZeroDivisionError):
         return None
-
-@register.filter
-def multiply(value, arg):
-    """คูณค่าด้วยอาร์กิวเมนต์"""
-    try:
-        return float(value) * float(arg)
-    except (ValueError, TypeError):
-        return value
 
 @register.filter
 def sum_quantity(items):
