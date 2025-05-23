@@ -530,3 +530,137 @@ class FeatureUsage(models.Model):
     
     def __str__(self):
         return f"{self.user.username} - {self.get_feature_display()} - {self.timestamp.strftime('%d/%m/%Y %H:%M')}"
+
+# เพิ่มใน myapp/models.py
+
+class PaymentMethod(models.Model):
+    """วิธีการชำระเงิน"""
+    PAYMENT_CHOICES = [
+        ('promptpay', 'PromptPay'),
+        ('bank_transfer', 'โอนเงินผ่านธนาคาร'),
+        ('credit_card', 'บัตรเครดิต'),
+        ('cash_on_delivery', 'เก็บเงินปลายทาง'),
+    ]
+    
+    name = models.CharField(max_length=100)
+    code = models.CharField(max_length=20, choices=PAYMENT_CHOICES, unique=True)
+    is_active = models.BooleanField(default=True)
+    description = models.TextField(blank=True)
+    
+    # สำหรับ PromptPay
+    promptpay_id = models.CharField(max_length=13, blank=True, help_text="เบอร์โทรศัพท์หรือเลขบัตรประชาชน")
+    promptpay_name = models.CharField(max_length=100, blank=True)
+    
+    def __str__(self):
+        return self.name
+
+
+class Payment(models.Model):
+    """บันทึกการชำระเงิน"""
+    PAYMENT_STATUS = [
+        ('pending', 'รอชำระเงิน'),
+        ('processing', 'กำลังตรวจสอบ'),
+        ('paid', 'ชำระแล้ว'),
+        ('failed', 'ชำระไม่สำเร็จ'),
+        ('refunded', 'คืนเงินแล้ว'),
+    ]
+    
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='payments')
+    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.PROTECT)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=20, choices=PAYMENT_STATUS, default='pending')
+    
+    # QR Code สำหรับ PromptPay
+    qr_code = models.ImageField(upload_to='payments/qr/', blank=True, null=True)
+    
+    # หลักฐานการโอนเงิน
+    slip_image = models.ImageField(upload_to='payments/slips/', blank=True, null=True)
+    
+    # ข้อมูลการชำระเงิน
+    transaction_id = models.CharField(max_length=100, blank=True)
+    paid_at = models.DateTimeField(blank=True, null=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"Payment #{self.id} - {self.order.order_number}"
+
+
+class ShippingAddress(models.Model):
+    """ที่อยู่จัดส่ง"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='shipping_addresses')
+    is_default = models.BooleanField(default=False)
+    
+    # ข้อมูลผู้รับ
+    recipient_name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=20)
+    
+    # ที่อยู่
+    address_line1 = models.CharField(max_length=255)
+    address_line2 = models.CharField(max_length=255, blank=True)
+    subdistrict = models.CharField(max_length=100)  # ตำบล/แขวง
+    district = models.CharField(max_length=100)     # อำเภอ/เขต
+    province = models.CharField(max_length=100)     # จังหวัด
+    postal_code = models.CharField(max_length=10)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.recipient_name} - {self.province}"
+    
+    def get_full_address(self):
+        """ที่อยู่แบบเต็ม"""
+        address_parts = [self.address_line1]
+        if self.address_line2:
+            address_parts.append(self.address_line2)
+        address_parts.extend([
+            f"ต.{self.subdistrict}",
+            f"อ.{self.district}",
+            f"จ.{self.province}",
+            self.postal_code
+        ])
+        return " ".join(address_parts)
+
+
+class ShippingMethod(models.Model):
+    """วิธีการจัดส่ง"""
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    base_fee = models.DecimalField(max_digits=10, decimal_places=2)
+    estimated_days = models.IntegerField(help_text="จำนวนวันในการจัดส่ง")
+    is_active = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return f"{self.name} ({self.estimated_days} วัน)"
+
+
+# เพิ่มฟิลด์ใน Order model
+class Order(models.Model):
+    # ... existing fields ...
+    
+    # เพิ่มฟิลด์ใหม่
+    shipping_address = models.ForeignKey(ShippingAddress, on_delete=models.SET_NULL, null=True, blank=True)
+    shipping_method = models.ForeignKey(ShippingMethod, on_delete=models.SET_NULL, null=True, blank=True)
+    shipping_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    tracking_number = models.CharField(max_length=100, blank=True)
+    
+    # สำหรับใบเสร็จ
+    invoice_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    
+    def generate_invoice_number(self):
+        """สร้างเลขที่ใบเสร็จ"""
+        if not self.invoice_number and self.status == 'paid':
+            year = timezone.now().year
+            month = timezone.now().month
+            count = Order.objects.filter(
+                invoice_number__startswith=f"INV{year}{month:02d}"
+            ).count() + 1
+            self.invoice_number = f"INV{year}{month:02d}{count:04d}"
+            self.save()
+    
+    @property
+    def grand_total(self):
+        """ยอดรวมทั้งหมด (รวมค่าจัดส่ง)"""
+        return self.total_amount + self.shipping_fee
