@@ -1,0 +1,70 @@
+{% extends 'myapp/base.html' %}
+{% block title %}ชำระเงิน - CareME{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <h1 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">ชำระเงิน</h1>
+        
+        <div class="mb-6">
+            <div class="text-center mb-4">
+                <p class="text-gray-600 dark:text-gray-400">ยอดชำระ</p>
+                <p class="text-3xl font-bold text-gray-900 dark:text-white">฿{{ payment.amount|floatformat:2 }}</p>
+            </div>
+            
+            <div class="text-center mb-4">
+                <p class="text-gray-600 dark:text-gray-400">หมายเลขคำสั่งซื้อ</p>
+                <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ payment.order.order_number }}</p>
+            </div>
+        </div>
+        
+        <div class="flex justify-center mb-6">
+            {% if qr_payment.qr_code %}
+                <img src="{{ qr_payment.qr_code.url }}" alt="QR Code" class="w-64 h-64">
+            {% else %}
+                <div class="w-64 h-64 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                    <p class="text-gray-500 dark:text-gray-400">ไม่พบ QR Code</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="text-center mb-6">
+            <p class="text-gray-600 dark:text-gray-400">QR Code หมดอายุใน</p>
+            <p class="text-lg font-semibold text-gray-900 dark:text-white" id="countdown"></p>
+        </div>
+        
+        <div class="text-center space-y-4">
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+                สแกน QR Code ด้วยแอปพลิเคชันธนาคารหรือแอปพลิเคชัน e-Wallet ของคุณ
+            </p>
+            
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+                    ยืนยันการชำระเงิน
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Countdown timer
+    function updateCountdown() {
+        const expiresIn = parseInt("{{ expires_in }}");
+        const minutes = Math.floor(expiresIn / 60);
+        const seconds = Math.floor(expiresIn % 60);
+        document.getElementById('countdown').textContent = 
+            `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (expiresIn > 0) {
+            setTimeout(updateCountdown, 1000);
+        } else {
+            document.getElementById('countdown').textContent = 'หมดเวลาแล้ว';
+            // Optionally redirect to checkout page
+            // window.location.href = "{% url 'checkout' %}";
+        }
+    }
+    
+    updateCountdown();
+</script>
+{% endblock %} 

@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y \
 # Set the repository root as the working directory
 WORKDIR /usr/src/app
 
+RUN apt-get update && apt-get install -y git
+
 # Copy the requirements file for caching
 COPY requirements_jupyter.txt .
 

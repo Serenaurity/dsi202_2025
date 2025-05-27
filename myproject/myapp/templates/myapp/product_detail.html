@@ -3,8 +3,14 @@
 {% block title %}{{ product.name }} - CareME{% endblock %}
 {% block content %}
     <div class="container mx-auto py-8 pt-20 px-4">
-        <!-- ใช้ Component Breadcrumbs -->
-        {% include 'myapp/components/breadcrumbs.html' with items=breadcrumbs %}
+        <!-- Breadcrumbs -->
+        <nav class="flex mb-8 text-gray-600 dark:text-gray-400">
+            <a href="{% url 'home' %}" class="hover:text-mint transition-colors">หน้าแรก</a>
+            <span class="mx-2">/</span>
+            <a href="{% url 'product_list' %}" class="hover:text-mint transition-colors">อุปกรณ์</a>
+            <span class="mx-2">/</span>
+            <span class="text-gray-900 dark:text-white">{{ product.name }}</span>
+        </nav>
         
         <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden animate-on-scroll">
             <div class="flex flex-col md:flex-row">

@@ -82,6 +82,11 @@ body {
 .delay-3 { animation-delay: 300ms; }
 .delay-4 { animation-delay: 400ms; }
 .delay-5 { animation-delay: 500ms; }
+.delay-6 { animation-delay: 600ms; }
+.delay-7 { animation-delay: 700ms; }
+.delay-8 { animation-delay: 800ms; }
+.delay-9 { animation-delay: 900ms; }
+.delay-10 { animation-delay: 1000ms; }
 
 /* === Custom Components === */
 .card {
@@ -101,7 +106,6 @@ body {
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
-/* Button Styles */
 .btn-primary {
   background-image: linear-gradient(to right, var(--color-mint), var(--color-teal));
   color: var(--color-rich-black);
@@ -109,7 +113,8 @@ body {
   padding: 0.75rem 1.5rem;
   border-radius: 9999px;
   transform: translateY(0);
-  transition: all 300ms;
+  transition-property: all;
+  transition-duration: 300ms;
 }
 
 .btn-primary:hover {
@@ -124,7 +129,8 @@ body {
   padding: 0.75rem 1.5rem;
   border-radius: 9999px;
   transform: translateY(0);
-  transition: all 300ms;
+  transition-property: all;
+  transition-duration: 300ms;
 }
 
 .btn-secondary:hover {
@@ -138,34 +144,53 @@ body {
   font-weight: bold;
   padding: 0.75rem 1.5rem;
   border-radius: 9999px;
-  transition: all 300ms;
+  transition-property: all;
+  transition-duration: 300ms;
 }
 
 .btn-outline:hover {
-  background-color: rgba(132, 232, 197, 0.1);
+  background-color: rgba(132, 232, 197, 0.1); /* rgba version of mint color with 0.1 opacity */
+}
+
+/* === Custom Cursor === */
+.custom-cursor {
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: rgba(58, 189, 184, 0.5);
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s, background-color 0.3s;
 }
 
 /* === Line Clamp === */
-.line-clamp-1, .line-clamp-2, .line-clamp-3 {
+.line-clamp-1 {
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  max-height: 1.5em; /* Fallback: assumes line-height is 1.5em */
   text-overflow: ellipsis;
 }
 
-.line-clamp-1 {
-  -webkit-line-clamp: 1;
-  max-height: 1.5em;
-}
-
 .line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
-  max-height: 3em;
+  max-height: 3em; /* Fallback: assumes line-height is 1.5em */
+  text-overflow: ellipsis;
 }
 
 .line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
-  max-height: 4.5em;
+  max-height: 4.5em; /* Fallback: assumes line-height is 1.5em */
+  text-overflow: ellipsis;
 }
 
 /* === Scroll Animation === */

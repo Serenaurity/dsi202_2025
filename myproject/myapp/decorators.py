@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.utils import timezone
 from functools import wraps
-from .models import Subscription , FeatureUsage
+from .models import Subscription
 
 # myapp/decorators.py
 def subscription_required(view_func):

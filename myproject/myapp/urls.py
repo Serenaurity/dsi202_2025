@@ -28,6 +28,7 @@ urlpatterns = [
     path('cart/remove/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('cart/update/<int:item_id>/', views.update_cart_item, name='update_cart_item'),
     path('checkout/', views.checkout, name='checkout'),
+    path('payment/<int:payment_id>/', views.payment, name='payment'),
     
     # แดชบอร์ดและคอนเทนต์
     path('dashboard/', views.user_dashboard, name='dashboard'),

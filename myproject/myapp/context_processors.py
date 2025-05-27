@@ -1,6 +1,7 @@
 # /myproject/myapp/context_processors.py
-from django.db import models
-from .models import Order, OrderItem
+
+from myapp.models import Order, OrderItem
+from django.db.models import Sum
 
 def cart_items_count(request):
     """
@@ -12,7 +13,7 @@ def cart_items_count(request):
             # Get the current cart (pending order)
             cart = Order.objects.get(user=request.user, status='pending')
             # Get total quantity of items in cart
-            count = OrderItem.objects.filter(order=cart).aggregate(total=models.Sum('quantity'))['total'] or 0
+            count = OrderItem.objects.filter(order=cart).aggregate(total=Sum('quantity'))['total'] or 0
         except Order.DoesNotExist:
             # No cart exists
             pass
